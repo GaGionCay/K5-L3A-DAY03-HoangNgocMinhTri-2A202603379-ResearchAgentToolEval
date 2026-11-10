@@ -1,4 +1,4 @@
-# Báo cáo cá nhân
+# Báo cáo cá nhân — Trần Thành Nam - 2A202603564
 
 ## 1\. Thông tin thành viên
 
