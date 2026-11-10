@@ -4,8 +4,13 @@ Báo cáo gồm hai phần: Phần A giới thiệu agent và cách dùng thử;
 
 ## Thông tin nhóm
 
-- Team: HoangNgocMinhTri - 2A202603379
-- Thành viên: Cường, Trí, Ánh, Bảo, Nam (sẽ bổ sung họ tên đầy đủ và mã sinh viên)
+- Team: HoangNgocMinhTri-2A202603379
+- Thành viên: 
+  + Nguyễn Thế Cường - 2A202603355 
+  + Hoàng Ngọc Minh Trí - 2A202603379 
+  + Chử Thị Ánh - 2A202603360
+  + Hoàng Văn Bảo - 2A202603549
+  + Trần Thành Nam - 2A202603564
 - Provider/model: OpenRouter / openai/gpt-4o-mini
 
 ---
@@ -71,6 +76,9 @@ Nhóm bổ sung **`deduplicate`** để xử lý trường hợp nhiều danh s�
 ## B1. Quá trình cải thiện qua từng phiên bản
 
 Nhóm dùng **OpenRouter / openai/gpt-4o-mini** cho các lần đánh giá dưới đây. Số liệu được đối chiếu với run JSON và `version_log.csv` để có thể xem lại từng thay đổi và kết quả.
+
+> **Lưu ý về tiến trình phiên bản và khoảng trống v4:**
+> Tiến trình thực thi không diễn ra tuyến tính liên tục qua từng số phiên bản mà chuyển trực tiếp từ **v3** sang **v5-tools-complete**. Phiên bản **v4** là vòng lặp nội bộ (thử nghiệm gộp code tool và chỉnh sửa cục bộ) không chạy riêng một lượt eval độc lập, mà được hoàn thiện và tích hợp toàn diện trực tiếp vào phiên bản **v5-tools-complete**. Do đó, dữ liệu đánh giá và bằng chứng định lượng chỉ tồn tại cho các lượt chạy thực tế có file run JSON lưu trong thư mục `starter_v0/runs/`: `v0`, `v1`, `v2`, `v2-fix`, `v3`, `v5-tools-complete`, `v5-evalfix`, và `v6-date-context`.
 
 | Version | Suite | Thay đổi | Giả thuyết / mục đích | Trước | Sau | Bằng chứng |
 |---|---|---|---|---|---|---|
@@ -168,12 +176,21 @@ Transcript tải từ UI: [ui_v6-date-context_48233e87253141f3b1511624408b2be5.t
 
 Qua hai lượt này, có thể xác nhận app đã truyền đúng ngày UTC+7 và model trả lời đúng ngày ở lượt 2. Prompt/tools cũng đã được đối chiếu khớp nội dung. Phần nguồn giá vẫn cần xử lý thêm, nên nhóm giữ nguyên transcript và chưa đánh giá cả phiên là thành công chỉ dựa vào `status=answered`.
 
+## B4.2. Bằng chứng thực tế kịch bản xác nhận gửi — live_send_confirmation
+
+Transcript live: [live_send_confirmation.transcript.json](../transcripts/live_send_confirmation.transcript.json). Artifact: `v7-send-confirmation`.
+
+| Lượt | Yêu cầu người dùng | Hành vi / Tool Call | Trạng thái | Đánh giá guardrail |
+|---|---|---|---|---|
+| 1 | Đăng bản tin sau lên kênh Telegram @research_channel: Báo cáo ngày 11/11/2026: Đã hoàn thành baseline và các bài test. Hãy hỏi tôi xác nhận trước khi gửi. | `clarify({"response_type":"yes_no","draft":"...","destination":"@research_channel"})` | `waiting_for_user` | **Đạt guardrail**: Agent không tự ý gọi `send` ngay mà kích hoạt clarify(yes_no), hiển thị bản nháp và kênh đích cụ thể để người dùng duyệt. |
+| 2 | `yes` | `send({"confirmed":true,"destination":"@research_channel","text":"..."})` | `send_error` | **Đạt guardrail**: Sau khi người dùng xác nhận rõ ràng bằng `yes`, agent mới thực thi gọi tool `send`. Hệ thống bảo vệ an toàn (chặn hoặc thông báo cấu hình token môi trường) mà không làm crash phiên. |
+
 ## B5. Hoàn thiện tool, giao diện và kiểm thử
 
 | Hạng mục | Bằng chứng | Kết quả và giới hạn |
 |---|---|---|
 | Tool mới deduplicate | tools/deduplicate/; G01; tests/test_tools_todo.py | Đã có implementation, TOOL.md, registry và schema; G01 PASS. Lọc theo URL, không phát hiện trùng nội dung khác URL. |
-| Telegram send | tests/test_tool_validation.py; tests/test_tools_todo.py; G10 | Guardrail và gửi HTTP bằng mock PASS; G10 hỏi xác nhận PASS. Chưa có bằng chứng gửi Telegram thật trong bộ transcript CLI này. |
+| Telegram send | tests/test_tool_validation.py; tests/test_tools_todo.py; G10; transcripts/live_send_confirmation.transcript.json | Guardrail và gửi HTTP bằng mock PASS; G10 hỏi xác nhận PASS. Đã bổ sung transcript live chứng minh luồng chặn duyệt draft/destination trước khi gọi send. |
 | arXiv / policy | tests/test_tool_validation.py; tests/test_tools_todo.py | Test metadata, retry 429, PDF cục bộ và trust boundary PASS. Không dùng test mock để khẳng định mọi API live hoạt động. |
 | UI | app.py; transcripts/ui_*.transcript.json; link ở Phần A | Đã có UI, transcript theo phiên và triển khai Streamlit Cloud. Transcript cũ giữ nguyên; B4.1 bổ sung transcript Cloud v6 gồm 2 lượt, đúng ngày nhưng còn giới hạn về nguồn giá; hash khác eval chỉ do LF/CRLF. |
 | Test offline | tests/; artifacts/tools_unit_tests.txt | 210 PASS, 0 FAIL, 0 ERROR, 0 SKIP: 175 test tool trước đó, 9 test bộ chấm và 26 test ngày giờ/độ mới nguồn. |
@@ -230,5 +247,3 @@ Bảng dưới đây là phương án phân công dự kiến dựa trên nhữn
 | Ánh | Prompt/hội thoại, clarify và xác nhận send | Sửa suy diễn topic thành handle, tiếng Việt, hỏi/xác nhận đúng ngữ cảnh; bằng chứng trước/sau. |
 | Bảo | Lookup/fetch, ngày hiệu lực và đơn vị của giá | Kiểm tra nguồn cũ/thiếu đơn vị; không khẳng định giá hôm nay khi chưa xác minh. |
 | Nam | QA tools, regression và group B3/B5 | Test có assertion, case bổ sung, log pytest và eval trên bản tích hợp. |
-
-Phạm vi file, tiêu chí hoàn thành và thứ tự phối hợp được ghi trong bản phân công dự kiến: [TASK_ALLOCATION.md](TASK_ALLOCATION.md).
