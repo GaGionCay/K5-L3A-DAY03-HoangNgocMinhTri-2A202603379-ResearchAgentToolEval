@@ -9,6 +9,31 @@ from typing import Any
 
 from providers.base import ModelResponse, ToolCall
 
+_UNAVAILABLE_RETRIES = 2
+_UNAVAILABLE_RETRY_DELAY_SECONDS = 2
+
+
+def _generate_with_retry(generate: Callable[[], Any]) -> Any:
+    for attempt in range(_UNAVAILABLE_RETRIES + 1):
+        try:
+            return generate()
+        except Exception as exc:
+            if _status_code(exc) != 503 or attempt == _UNAVAILABLE_RETRIES:
+                raise
+            time.sleep(_UNAVAILABLE_RETRY_DELAY_SECONDS * (attempt + 1))
+    raise RuntimeError("Gemini request retry loop ended unexpectedly")
+
+
+def _status_code(exc: Exception) -> int | None:
+    code = getattr(exc, "code", None) or getattr(exc, "status_code", None)
+    if code is None:
+        response = getattr(exc, "response", None)
+        code = getattr(response, "status_code", None)
+    try:
+        return int(code)
+    except (TypeError, ValueError):
+        return None
+
 
 logger = logging.getLogger(__name__)
 

@@ -25,12 +25,6 @@ tools:
         items:
           type: string
         description: Danh sách lựa chọn không rỗng; cần ít nhất hai lựa chọn khi response_type=choice.
-      draft:
-        type: string
-        description: Bản nháp chính xác cần người dùng duyệt khi xác nhận thao tác gửi.
-      destination:
-        type: string
-        description: Đích gửi chính xác cần hiển thị và gắn với bản nháp khi xác nhận thao tác gửi.
     required:
     - question
 - name: timeline
