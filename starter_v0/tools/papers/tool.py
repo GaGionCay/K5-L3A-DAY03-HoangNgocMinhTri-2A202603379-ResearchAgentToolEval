@@ -9,6 +9,7 @@ from typing import Any
 import requests
 
 from tools._shared import TIMEOUT, err
+from tools._validation import arxiv_id, choice, integer, text
 
 
 ARXIV_API_URL = "https://export.arxiv.org/api/query"
@@ -50,8 +51,10 @@ def _arxiv_search_query(query: str) -> str:
 
 
 def _arxiv_id(value: str) -> str:
-    match = re.search(r"(\d{4}\.\d{4,5}(?:v\d+)?)", value or "")
-    return match.group(1) if match else ""
+    try:
+        return arxiv_id(value)
+    except ValueError:
+        return ""
 
 
 def _entry_text(entry: ET.Element, path: str, namespaces: dict[str, str]) -> str:
@@ -61,8 +64,9 @@ def _entry_text(entry: ET.Element, path: str, namespaces: dict[str, str]) -> str
 
 def arxiv_search(query: str = "", max_results: int = 5, sort_by: str = "relevance") -> dict[str, Any]:
     try:
-        max_results = max(1, min(int(max_results or 5), 10))
-        sort_by = sort_by if sort_by in {"relevance", "lastUpdatedDate", "submittedDate"} else "relevance"
+        query = text(query, "query")
+        max_results = integer(max_results, "max_results", maximum=10)
+        sort_by = choice(sort_by, "sort_by", {"relevance", "lastUpdatedDate", "submittedDate"})
         params = {
             "search_query": _arxiv_search_query(query),
             "max_results": max_results,
@@ -104,7 +108,7 @@ def arxiv_search(query: str = "", max_results: int = 5, sort_by: str = "relevanc
             "query": query,
             "api_query": params["search_query"],
             "total_results": int(total_node.text) if total_node is not None and total_node.text else None,
-            "items": entries,
+            "items": entries[:max_results],
             "rate_limit_note": "arXiv may return 429 if called too frequently; this tool waits at least 3 seconds between requests in-process.",
         }
     except Exception as exc:

@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from tools._shared import domain
+from tools._shared import domain, err
+from tools._validation import choice, object_list, text
 
 
 def _src(item: dict[str, Any]) -> str:
@@ -18,7 +19,7 @@ def _bullet(item: dict[str, Any]) -> str:
     return f"- {text} - {_src(item)}"
 
 
-def render_digest(items: list[dict[str, Any]] | None = None, template: str = "sections", headline: str = "") -> dict[str, Any]:
+def _render_digest(items: list[dict[str, Any]] | None = None, template: str = "sections", headline: str = "") -> dict[str, Any]:
     items = items or []
     if template == "brief":
         markdown = (f"**{headline}**\n\n" if headline else "") + "\n".join(_bullet(item) for item in items[:5])
@@ -29,7 +30,7 @@ def render_digest(items: list[dict[str, Any]] | None = None, template: str = "se
     elif template == "daily_ai_vn":
         groups: dict[str, list[dict[str, Any]]] = {}
         for item in items:
-            groups.setdefault(item.get("section", "Tin chính"), []).append(item)
+            groups.setdefault((item.get("section") or "Tin chính"), []).append(item)
         parts = [f"**{headline or 'Tin tức hôm nay'}**", ""]
         for section, section_items in groups.items():
             parts += [f"**{section}**", *[_bullet(item) for item in section_items], ""]
@@ -37,10 +38,24 @@ def render_digest(items: list[dict[str, Any]] | None = None, template: str = "se
     else:
         groups: dict[str, list[dict[str, Any]]] = {}
         for item in items:
-            groups.setdefault(item.get("section", "Tổng hợp"), []).append(item)
+            groups.setdefault((item.get("section") or "Tổng hợp"), []).append(item)
         parts = ([f"# {headline}", ""] if headline else [])
         for section, section_items in groups.items():
             parts += [f"## {section}", *[_bullet(item) for item in section_items], ""]
         markdown = "\n".join(parts)
     return {"tool": "render_digest", "template": template, "markdown": markdown, "item_count": len(items)}
 
+
+
+def render_digest(items: list[dict[str, Any]] | None = None, template: str = "sections", headline: str = "") -> dict[str, Any]:
+    try:
+        items = object_list(items, "items", allow_none=True)
+        template = choice(template, "template", {"brief", "sections", "bullets", "thread", "daily_ai_vn"})
+        headline = text(headline, "headline", allow_empty=True)
+        for item in items:
+            for field in ("title", "summary", "url", "source", "section"):
+                if item.get(field) is not None and not isinstance(item[field], str):
+                    raise ValueError(f"item.{field} must be a string")
+        return _render_digest(items, template, headline)
+    except Exception as exc:
+        return err("render_digest", exc)

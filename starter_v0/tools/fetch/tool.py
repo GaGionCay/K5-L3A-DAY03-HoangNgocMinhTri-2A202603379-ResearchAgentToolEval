@@ -6,19 +6,26 @@ from typing import Any
 import requests
 
 from tools._shared import TIMEOUT, domain, err
+from tools._validation import http_url
 
 
 def read_url(url: str = "") -> dict[str, Any]:
     try:
-        api_key = os.getenv("FIRECRAWL_API_KEY", "")
+        url = http_url(url)
+        key = os.getenv("FIRECRAWL_API_KEY")
+        if not key:
+            raise RuntimeError("Missing FIRECRAWL_API_KEY env var")
         response = requests.post(
             "https://api.firecrawl.dev/v1/scrape",
             json={"url": url, "formats": ["markdown"]},
-            headers={"Authorization": f"Bearer {api_key}"},
+            headers={"Authorization": f"Bearer {key}"},
             timeout=60,
         )
         response.raise_for_status()
-        data = response.json().get("data", {})
+        payload = response.json()
+        if payload.get("success") is False:
+            raise RuntimeError("Firecrawl reported an unsuccessful scrape")
+        data = payload.get("data", {})
         meta = data.get("metadata", {}) or {}
         return {"tool": "read_url", "url": url, "items": [{
             "title": meta.get("title") or url,
@@ -28,3 +35,4 @@ def read_url(url: str = "") -> dict[str, Any]:
         }]}
     except Exception as exc:
         return err("read_url", exc)
+

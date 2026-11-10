@@ -6,6 +6,7 @@ from typing import Any
 import requests
 
 from tools._shared import TIMEOUT, err
+from tools._validation import choice, handle, integer, object_list, text
 
 
 def _twitter_get(path: str, params: dict[str, Any]) -> dict[str, Any]:
@@ -39,12 +40,15 @@ def _tweet_item(raw: dict[str, Any]) -> dict[str, Any]:
 
 def _tweets_from(data: dict[str, Any], limit: int) -> list[dict[str, Any]]:
     raw_items = data.get("timeline") or data.get("tweets") or []
-    items = [_tweet_item(item) for item in raw_items if item.get("tweet_id") or item.get("id")]
-    return items[: int(limit or 5)]
+    items = [_tweet_item(item) for item in object_list(raw_items, "tweets") if item.get("tweet_id") or item.get("id")]
+    return items[:limit]
 
 
 def search_tweets(query: str = "", search_type: str = "Latest", limit: int = 5) -> dict[str, Any]:
     try:
+        query = text(query, "query")
+        search_type = choice(search_type, "search_type", {"Top", "Latest"})
+        limit = integer(limit, "limit", maximum=100)
         data = _twitter_get("/search.php", {"query": query, "search_type": search_type})
         return {"tool": "search_tweets", "query": query, "search_type": search_type, "items": _tweets_from(data, limit)}
     except Exception as exc:

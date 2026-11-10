@@ -1,0 +1,408 @@
+{
+  "transcript_id": "ui_v6-date-context_48233e87253141f3b1511624408b2be5",
+  "version": "v6-date-context",
+  "artifact_version": "v6-date-context+pc5fd2628fcf2+t190818f266ea",
+  "prompt_hash": "c5fd2628fcf26cc0765af32ff5f75c1336d4aaa83d84733ab3cd9473c0e56feb",
+  "tools_hash": "190818f266ea69b63d552b9f0a939295d7a8a7d70771f328105b3ef5b1ae6da1",
+  "provider": "openrouter",
+  "interface": "streamlit",
+  "created_at": "2026-11-10T09:54:32",
+  "turns": [
+    {
+      "turn_index": 1,
+      "started_at": "2026-11-10T09:54:41",
+      "user": "Giá vàng hôm nay ",
+      "status": "answered",
+      "runtime_context": {
+        "current_datetime": "2026-11-10T16:54:41+07:00",
+        "current_date": "2026-11-10",
+        "display_date": "10/11/2026",
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset": "+07:00"
+      },
+      "assistant_text": "Giá vàng hôm nay như sau:\n\n1. **Giá vàng 585 (14K)**: 72.390 - 78.390 VNĐ\n2. **Giá vàng 416 (10K)**: 49.740 - 55.740 VNĐ\n3. **Giá vàng 375 (9K)**: 44.250 - 50.250 VNĐ\n4. **Giá vàng 333 (8K)**: 38.620 - 44.620 VNĐ\n\nNguồn: [PNJ](https://giavang.pnj.com.vn)\n\nNgoài ra, giá vàng 999.9 (24K) được cập nhật là 13.700 - 14.100 VNĐ.\n\nNguồn: [Bảo Tín Minh Châu](https://btmc.vn/gia-vang-theo-ngay.html)\n\nBạn có thể tham khảo thêm thông tin chi tiết từ các trang web này.",
+      "rounds": [
+        {
+          "round": 1,
+          "assistant_text": null,
+          "tool_calls": [
+            {
+              "name": "lookup",
+              "args": {
+                "query": "giá vàng",
+                "topic": "general",
+                "max_age_hours": 0
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "tool": "lookup",
+              "args": {
+                "query": "giá vàng",
+                "topic": "general",
+                "max_age_hours": 0
+              },
+              "result": {
+                "tool": "web_search",
+                "query": "giá vàng",
+                "topic": "general",
+                "timeframe": null,
+                "max_age_hours": 0,
+                "retrieved_at": "2026-11-10T16:54:45+07:00",
+                "items": [
+                  {
+                    "title": "Giá vàng: Trang chủ",
+                    "url": "https://giavang.pnj.com.vn",
+                    "source": "giavang.pnj.com.vn",
+                    "summary": "Vàng 585 (14K), 72.390, 78.390. Vàng 416 (10K), 49.740, 55.740. Vàng 375 (9K), 44.250, 50.250. Vàng 333 (8K), 38.620, 44.620. Giá vàng nguyên liệu mua ngoài ...Read more",
+                    "score": 0.74652773
+                  },
+                  {
+                    "title": "Cập Nhật Giá Vàng Mới Nhất, Mua Bán Vàng Uy Tín",
+                    "url": "https://btmc.vn/gia-vang-theo-ngay.html",
+                    "source": "btmc.vn",
+                    "summary": "Bảo Tín Minh Châu cung cấp dịch vụ mua bán vàng, cập nhật giá vàng mới nhất ・ 999.9 (24k) 13700 14100. Điện thoại: 0247.305.6899 ・ số 286/GP-NHNN",
+                    "score": 0.59824234
+                  },
+                  {
+                    "title": "SJC: Trang Chủ - CÔNG TY TNHH MTV VÀNG BẠC ĐÁ QUÝ ...",
+                    "url": "https://sjc.com.vn",
+                    "source": "sjc.com.vn",
+                    "summary": "3 days ago — Giá vàng SJC ; Vàng SJC 1L, 10L, 1KG, 138,000, 141,000 ; Vàng SJC 5 chỉ, 138,000, 141,020 ; Vàng SJC 0.5 chỉ, 1 chỉ, 2 chỉ, 138,000, 141,030 ; Vàng ...Read more",
+                    "score": 0.51413256
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "assistant_text": "Giá vàng hôm nay như sau:\n\n1. **Giá vàng 585 (14K)**: 72.390 - 78.390 VNĐ\n2. **Giá vàng 416 (10K)**: 49.740 - 55.740 VNĐ\n3. **Giá vàng 375 (9K)**: 44.250 - 50.250 VNĐ\n4. **Giá vàng 333 (8K)**: 38.620 - 44.620 VNĐ\n\nNguồn: [PNJ](https://giavang.pnj.com.vn)\n\nNgoài ra, giá vàng 999.9 (24K) được cập nhật là 13.700 - 14.100 VNĐ.\n\nNguồn: [Bảo Tín Minh Châu](https://btmc.vn/gia-vang-theo-ngay.html)\n\nBạn có thể tham khảo thêm thông tin chi tiết từ các trang web này.",
+          "tool_calls": [],
+          "tool_results": []
+        }
+      ],
+      "tool_events": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "giá vàng",
+            "topic": "general",
+            "max_age_hours": 0
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "giá vàng",
+            "topic": "general",
+            "timeframe": null,
+            "max_age_hours": 0,
+            "retrieved_at": "2026-11-10T16:54:45+07:00",
+            "items": [
+              {
+                "title": "Giá vàng: Trang chủ",
+                "url": "https://giavang.pnj.com.vn",
+                "source": "giavang.pnj.com.vn",
+                "summary": "Vàng 585 (14K), 72.390, 78.390. Vàng 416 (10K), 49.740, 55.740. Vàng 375 (9K), 44.250, 50.250. Vàng 333 (8K), 38.620, 44.620. Giá vàng nguyên liệu mua ngoài ...Read more",
+                "score": 0.74652773
+              },
+              {
+                "title": "Cập Nhật Giá Vàng Mới Nhất, Mua Bán Vàng Uy Tín",
+                "url": "https://btmc.vn/gia-vang-theo-ngay.html",
+                "source": "btmc.vn",
+                "summary": "Bảo Tín Minh Châu cung cấp dịch vụ mua bán vàng, cập nhật giá vàng mới nhất ・ 999.9 (24k) 13700 14100. Điện thoại: 0247.305.6899 ・ số 286/GP-NHNN",
+                "score": 0.59824234
+              },
+              {
+                "title": "SJC: Trang Chủ - CÔNG TY TNHH MTV VÀNG BẠC ĐÁ QUÝ ...",
+                "url": "https://sjc.com.vn",
+                "source": "sjc.com.vn",
+                "summary": "3 days ago — Giá vàng SJC ; Vàng SJC 1L, 10L, 1KG, 138,000, 141,000 ; Vàng SJC 5 chỉ, 138,000, 141,020 ; Vàng SJC 0.5 chỉ, 1 chỉ, 2 chỉ, 138,000, 141,030 ; Vàng ...Read more",
+                "score": 0.51413256
+              }
+            ]
+          }
+        }
+      ],
+      "ended_at": "2026-11-10T09:54:48"
+    },
+    {
+      "turn_index": 2,
+      "started_at": "2026-11-10T09:55:05",
+      "user": "hôm nay là ngày bao nhiêu và cho tôi biết giá xăng hôm nay",
+      "status": "answered",
+      "runtime_context": {
+        "current_datetime": "2026-11-10T16:55:05+07:00",
+        "current_date": "2026-11-10",
+        "display_date": "10/11/2026",
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset": "+07:00"
+      },
+      "assistant_text": "Hôm nay là ngày **10 tháng 11 năm 2026**.\n\nVề giá xăng hôm nay, thông tin cập nhật như sau:\n\n1. **Xăng E10 RON 95-III**: 21.150 VNĐ/lít (giảm 2.080 VNĐ)\n2. **Xăng E5 RON 92**: 20.890 VNĐ/lít (giảm 2.310 VNĐ)\n3. **Dầu Diesel**: 28.690 VNĐ/lít (giảm 180 VNĐ)\n\nNguồn: [VnExpress](https://vnexpress.net/chu-de/gia-xang-dau-3026)\n\nNếu bạn cần thêm thông tin gì khác, hãy cho tôi biết!",
+      "rounds": [
+        {
+          "round": 1,
+          "assistant_text": null,
+          "tool_calls": [
+            {
+              "name": "lookup",
+              "args": {
+                "query": "giá xăng hôm nay",
+                "topic": "general",
+                "max_results": 5
+              }
+            },
+            {
+              "name": "lookup",
+              "args": {
+                "query": "hôm nay là ngày bao nhiêu",
+                "topic": "general",
+                "max_results": 5
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "tool": "lookup",
+              "args": {
+                "query": "giá xăng hôm nay",
+                "topic": "general",
+                "max_results": 5
+              },
+              "result": {
+                "tool": "web_search",
+                "query": "giá xăng hôm nay",
+                "topic": "general",
+                "timeframe": null,
+                "max_age_hours": null,
+                "retrieved_at": "2026-11-10T16:55:10+07:00",
+                "items": [
+                  {
+                    "title": "Giá xăng dầu hôm nay RON 95, E5 RON 92, dầu Diesel, dầu hỏa",
+                    "url": "https://vietnamnet.vn/gia-xang-dau-tag5537394984591514120.html",
+                    "source": "vietnamnet.vn",
+                    "summary": "Giá xăng dầu hôm nay (4/11) trên thị trường thế giới giảm xuống mức thấp nhất trong gần 4 tuần. Trong nước, giá các loại xăng và dầu diesel được điều chỉnh giảm vào tối qua, giá xăng còn hơn 23.000 đồng/lít.\n\nGiảm nhiều loại thuế về 0, giá xăng dầu Việt Nam thấp hơn các nước ln cận   icon avatar\n\nThị trường\n\n### Giảm nhiều loại thuế về 0, giá xăng dầu Việt Nam thấp hơn các nước ln cận [...] Giá xăng dầu hôm nay (6/11) trên thị trường quốc tế tăng do lo ngại về nguy cơ gián đoạn nguồn cung năng lượng toàn cầu. Trong nước, từ chiều qua, giá xăng dầu được điều chỉnh giảm, giá xăng E5RON92 về dưới 21.000 đồng/lít.\n\nGiá xăng giảm mạnh hơn 2.300 đồng/lít, dầu đồng loạt đi xuống\n\nThị trường\n\n### Giá xăng giảm mạnh hơn 2.300 đồng/lít, dầu đồng loạt đi xuống [...] Giá xăng dầu hôm nay (1/11), dầu thô trên thị trường quốc tế ghi nhận tuần biến động trái chiều khi giá dầu Brent hạ còn dầu WTI tăng. Trong nước, giá xăng tuần này giảm hơn 1.000 đồng/lít, trong khi dầu diesel và mazut tăng.\n\nGiá xăng đồng loạt giảm trong đêm, có loại giảm 1.804 đồng/lít\n\nThị trường\n\n### Giá xăng đồng loạt giảm trong đêm, có loại giảm 1.804 đồng/lít",
+                    "score": 0.84918517,
+                    "published_date": "Sun, 01 Nov 2026 11:00:00 GMT"
+                  },
+                  {
+                    "title": "Giá xăng dầu hôm nay 7/11, tin giá xăng mới nhất",
+                    "url": "https://vnexpress.net/chu-de/gia-xang-dau-3026",
+                    "source": "vnexpress.net",
+                    "summary": "VnExpress - Bao tieng Viet nhieu nguoi xem nhat    Thứ bảy, 7/11/2026  \n\nMới nhất \n\nTin theo khu vực \n\n Hà Nội\n TP HCM\n\nInternational\n \n\n# Giá xăng hôm nay\n\n## Giá bán lẻ xăng dầu hôm nay\n\n|  |  |  |\n --- \n| Mặt hàng | Giá từ 15:00 05/11/2026 (đơn vị: đồng/lít) | So với kỳ trước |\n| Xăng E10 RON 95-III | 21150 | - 2080 |\n| Xăng E5 RON 92 | 20890 | - 2310 |\n| Dầu Diesel | 28690 | - 180 |\n\nAnh tăng lãi suất lần đầu tiên sau 3 năm\n\n### Anh tăng lãi suất lần đầu tiên sau 3 năm [...] Từ 15h hôm nay, giá xăng dầu các loại cùng giảm 180-2.310 đồng một lít, theo đà diễn biến thị trường năng lượng thế giới.\n\nThứ trưởng Công Thương: Gần như không còn phản ánh về xăng E10\n\n### Thứ trưởng Công Thương: Gần như không còn phản ánh về xăng E10\n\nBộ Công Thương nhận 315 ý kiến về xăng sinh học, chủ yếu trong hai tháng đầu triển khai, còn tháng 9-10 gần như không có phản ánh, theo Thứ trưởng Lương Hoàng Thái.\n\nVụ bán chui 5,1 triệu lít xăng: 'Đừng mang mẹ già, con nhỏ ra xin giảm án' [...] ### Vụ bán chui 5,1 triệu lít xăng: 'Đừng mang mẹ già, con nhỏ ra xin giảm án'\n\nHà NộiTrước việc kế toán PVOil Vũng Áng nói \"thương nhớ mẹ già, con nhỏ\", xin án nhẹ để về chăm sóc, VKS hỏi khi tham ô 94 tỷ đồng đi đánh bạc có nhớ đến họ không mà nay \"đưa ra xin khoan hồng\".\n\nGiá xăng, dầu cùng giảm\n\n### Giá xăng, dầu cùng giảm\n\nTừ 22h hôm nay, giá xăng dầu các loại (trừ mazut) cùng giảm 920-1.370 đồng một lít.\n\nKế toán PVOil Vũng Áng bị đề nghị tù chung thn vì tham ô 94 tỷ đồng",
+                    "score": 0.83225065,
+                    "published_date": "Sun, 01 Nov 2026 12:00:00 GMT"
+                  },
+                  {
+                    "title": "Giá xăng dầu hôm nay trên Báo Quân đội nhân dân Điện tử",
+                    "url": "https://www.qdnd.vn/tag/gia-xang-dau-9.html",
+                    "source": "qdnd.vn",
+                    "summary": "Giá xăng dầu hôm nay (31-10): Tăng hơn 2%, lên mức cao nhất trong 6 tháng qua\n\n### Giá xăng dầu hôm nay (31-10): Tăng hơn 2%, lên mức cao nhất trong 6 tháng qua\n\n31/10/2026 05:40\n\nGiá dầu thế giới tăng hơn 2% trong phiên giao dịch ngày cuối cùng của tuần, chạm mốc cao nhất kể từ cuối tháng 4, khi giới đầu tư lo ngại xung đột Mỹ - Iran có thể leo thang sau cuộc bầu cử giữa nhiệm kỳ tại Mỹ. Trong nước, giá xăng dầu cũng được điều chỉnh tăng đồng loạt. [...] Giá xăng dầu hôm nay (30-10): Giá dầu thế giới quay đầu giảm\n\n### Giá xăng dầu hôm nay (30-10): Giá dầu thế giới quay đầu giảm\n\n30/10/2026 05:55\n\nGiá dầu giảm khi kỳ vọng Mỹ và Iran nối lại đàm phán hòa bình phần nào làm dịu lo ngại về nguy cơ gián đoạn nguồn cung do xung đột leo thang tại Trung Đông. Trong nước, giá xăng dầu được điều chỉnh tăng đồng loạt.\n\nTừ 15 giờ hôm nay (29-10), giá xăng dầu trong nước điều chỉnh tăng [...] ### Từ 15 giờ hôm nay (29-10), giá xăng dầu trong nước điều chỉnh tăng\n\n29/10/2026 15:22\n\nGiá xăng dầu các loại ở trong nước được điều chỉnh tăng từ 15 giờ hôm nay (29-10) theo quyết định của liên Bộ Công Thương - Tài chính.\n\nGiá xăng dầu hôm nay (29-10): Đảo chiều tăng\n\n### Giá xăng dầu hôm nay (29-10): Đảo chiều tăng\n\n29/10/2026 05:38\n\nGiá dầu thế giới tăng do giao tranh tại Yemen và vụ tấn công nhà máy lọc dầu ở Saudi Arabia. Trong nước, giá xăng dầu dự kiến điều chỉnh tăng.",
+                    "score": 0.82895297,
+                    "published_date": "Sun, 01 Nov 2026 21:00:00 GMT"
+                  },
+                  {
+                    "title": "Giá xăng dầu hôm nay bao nhiêu 1 lít mới nhất?",
+                    "url": "https://topi.vn/gia-xang-dau-hom-nay.html",
+                    "source": "topi.vn",
+                    "summary": "Công ty Cổ phần Dầu Qun đội - MIPEC cũng công bố bảng giá bán lẻ cho các sản phẩm an toàn không chì RON 95, lo sinh học E5 RON 92 và dầu Diezel mới nhất ngày hôm nay như sau:\n\n| SẢN PHẨM | VÙNG 1 (VNĐ/LÍT) | VÙNG 2 (VNĐ/LÍT) |\n| Xăng sinh học E10 RON 95-III | 22.600 đ | 23.050 đ |\n| Xăng sinh học E5 RON 92-II | 21.760 đ | 22.190 đ |\n| Diezel 0,001S mức 5 | 29.880 đ | 30.480 đ |\n| Diezel 0,05S mức 2 | 28.080 đ | 28.640 đ |\n\n### 4. Biểu đồ giá dầu thế giới\n\nXem thêm: [...] Dưới đy là bảng giá xăng dầu bán lẻ mới nhất từ ​​Tổng công ty Dầu Việt Nam - PVOIL vào kỳ điều chỉnh mới nhất:\n\n| Mặt hàng | Đồng/lít | Điều chỉnh (tăng/giảm) |\n| Xăng E10 RON 95 - III | 22.600 đ | -60 đ |\n| Xăng E5 RON 92 - II | 21.760 đ | -70 đ |\n| Dầu DO 0,05S - II | 28.080 đ | -460 đ |\n| Dầu DO 0,001S - V | 29.880 đ | -760 đ |\n\nCác giá trị đã bao gồm thuế GTGT và thuế bảo vệ môi trường​\n\nXem ngay: Giá vàng hôm nay\n\n### 3. Bảng giá xăng dầu Qun Đội - Mipec [...] | Sản phẩm | Vùng 1 (vnđ/lít) | Vùng 2 (vnđ/lít) |\n| Xăng E10 RON 95-V | 24.000 | 24.480 |\n| Xăng E10 RON 95-III | 22.600 | 23.050 |\n| Xăng E5 RON 92-II | 21.760 | 22.190 |\n| DO 0,001S-V | 29.880 | 30.470 |\n| DO 0,05S-II | 28.080 | 28.640 |\n| Dầu hỏa 2-K | 26.630 | 27.160 |\n\nCập nhật giá của Petrolimex vào lúc 15h và có hiệu lực cho đến kỳ điều chỉnh giá tiếp theo.\n\n### 2. Bảng giá xăng dầu PVOIL - Tổng công ty Dầu Việt Nam",
+                    "score": 0.78963995
+                  },
+                  {
+                    "title": "Giá xăng dầu hôm nay cập nhật mới nhất",
+                    "url": "https://baomoi.com/tien-ich-gia-xang-dau.epi",
+                    "source": "baomoi.com",
+                    "summary": "| Loại xăng dầu | Giá vùng 1 (VNĐ) | Giá vùng 2 (VNĐ) |\n --- \n| Dầu hỏa 2-K | 28,600 | 29,170 |\n| DO 0,001S Mức 5 | 30,090 | 30,690 |\n| DO 0,05S Mức 2 | 28,690 | 29,260 |\n| Xăng E10 RON 95 Mức 3 | 21,150 | 21,570 |\n| Xăng E10 RON 95 Mức 5 | 22,650 | 23,100 |\n| Xăng E5 RON 92 | 24,220 | 24,700 |\n| Xăng E5 RON 92 Mức 2 | 20,890 | 21,300 |\n\nNguồn: giaxanghomnay.com\n\n## Loại xăng dầu [...] ## Loại xăng dầu\n\n Dầu hỏa 2-K\n DO 0,001S Mức 5\n DO 0,05S Mức 2\n Xăng E10 RON 95 Mức 3\n Xăng E10 RON 95 Mức 5\n Xăng E5 RON 92\n Xăng E5 RON 92 Mức 2\n\n## Tin tức Giáxăng dầuhôm nay\n\n### Giữ ổn định giá hàng hóa, dịch vụ do nhà nước quản lý đến hết năm 2026\n\n1284 liên quan\n\nPhó Thủ tướng Nguyễn Văn Thắng yêu cầu giữ ổn định giá hàng hóa, dịch vụ do nhà nước quản lý đến hết năm 2026; kiểm soát chặt giá cả, không để xảy ra biến động bất thường trong dịp cuối năm và Tết Nguyên đán 2027. [...] Tiện ích# Giá xăng dầu\n\n## Loại xăng dầu\n\n Dầu hỏa 2-K\n DO 0,001S Mức 5\n DO 0,05S Mức 2\n Xăng E10 RON 95 Mức 3\n Xăng E10 RON 95 Mức 5\n Xăng E5 RON 92\n Xăng E5 RON 92 Mức 2\n\n## Giá Xăng dầuNgày09-11-2026 00:30",
+                    "score": 0.77055156,
+                    "published_date": "Wed, 04 Nov 2026 06:00:00 GMT"
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "lookup",
+              "args": {
+                "query": "hôm nay là ngày bao nhiêu",
+                "topic": "general",
+                "max_results": 5
+              },
+              "result": {
+                "tool": "web_search",
+                "query": "hôm nay là ngày bao nhiêu",
+                "topic": "general",
+                "timeframe": null,
+                "max_age_hours": null,
+                "retrieved_at": "2026-11-10T16:55:12+07:00",
+                "items": [
+                  {
+                    "title": "Lịch Âm Hôm Nay - Âm lịch - Lịch Âm Dương 2026",
+                    "url": "https://lichngaytot.com/lich-am-duong.html",
+                    "source": "lichngaytot.com",
+                    "summary": "Hôm nay là ngày 07/11/2026 dương lịch.\n\n### m lịch hôm nay là ngày bao nhiêu?\n\nLịch m hôm nay là ngày 29 tháng Chín năm 2026, theo lịch Can chi là ngày Ất Dậu tháng Mậu Tuất năm Bính Ngọ\n\n### Phn biệt Lịch m dương, Lịch m, Lịch dương\n\nThế giới có nhiều loại lịch khác nhau, nhưng hiện nay có 3 loại được sử dụng phổ biến nhất là: lịch dương, lịch m và lịch m dương (hoặc có thể gọi tương ứng lần lượt là dương lịch, m lịch và m dương lịch).\n\n#### 1. Lịch dương [...] - Hình thức: Người ta quy ra 1 tháng đủ sẽ có 30 ngày, còn tháng m nào thiếu chỉ có 29 ngày. Tính ra, đối với năm m lịch sẽ chỉ có 12 lần trăng tròn khuyết, tương ứng với một năm sẽ có 354 hoặc 355 ngày.\n\n- Phạm vi ứng dụng: Thời cổ đại, Trung Quốc và Ai Cập là hai nước đầu tiên sử dụng loại lịch này. Hiện nay, chỉ có đạo hồi là sử dụng lịch m thuần túy.\n\n#### 3. Lịch m dương [...] Dương lịch\n\n  3\n\n  Tháng 12\n\n  m lịch\n\n  25\n\n  Tháng 10\n Sự kiện diễn ra trong 25 ngày tới\n\n  Ngày Người khuyết tật Quốc tế\n\n  Thứ Năm: 3/12/2026 (25/10/2026 m lịch)\n\n  Giờ tốt: Kỷ Sửu (1h-3h), Nhm Thìn (7h-9h), Giáp Ngọ (11h-13h), Ất Mùi (13h-15h), Mậu Tuất (19h-21h), Kỷ Hợi (21h-23h)\n\n  Ngày Tn Hợi, tháng Kỷ Hợi, năm Bính Ngọ\n\n  Hỷ thần: Hướng Ty Nam | Tài thần: Hướng Ty Nam | Hắc thần: Hướng Đông Bắc\n\n  Vận xấu: Ngày Dương công kỵ , Nguyệt kỵ, Tam nương sát\n\n  Ngày Hoàng đạo Chi tiết",
+                    "score": 0.69573146,
+                    "published_date": "Tue, 03 Nov 2026 03:00:00 GMT"
+                  },
+                  {
+                    "title": "Lịch Âm Hôm Nay - Âm Lịch Hôm Nay - Xem Lịch Âm",
+                    "url": "https://www.xemlicham.com",
+                    "source": "xemlicham.com",
+                    "summary": "Lịch m thuần túy chỉ có 12 tháng, nên một năm m lịch dài khoảng 354 ngày, ngắn hơn năm dương lịch khoảng 11 ngày. Tiêu biểu là lịch Hồi giáo: vì không có tháng nhuận nên các tháng của lịch này trôi dần qua các mùa, phải khoảng 33 năm mới quay lại đúng vị trí cũ. [...] # Lịch m hôm nay\n\n## xem lịch m hôm nay\n\nNgày Dương Lịch: 7-11-2026\n\nNgày m Lịch: 29-9-2026\n\nNgày trong tuần: Thứ Bảy\n\nNgày Ất Dậu tháng Mậu Tuất năm Bính Ngọ\n\nNgày Huyền Vũ: xuất hành thường gặp cãi cọ, gặp việc xấu, không nên đi\n\nGiờ Hoàng Đạo: Tý (23-1), Dần (3-5), Mão (5-7), Ngọ (11-13), Mùi (13-15), Dậu (17-19)\n\nxem lịch m ngày m lịch xem ngày tốt xấu lịch m 2027 lịch m 2026 hôm nay m lịch hôm nay là bao nhiêu\n\n### M LỊCH NGÀY 7 THÁNG 11 2026 [...] ### Nguồn gốc lịch m\n\nLịch m (m lịch) là loại lịch tính theo chu kỳ tròn khuyết của Mặt Trăng. Mỗi tháng m lịch bắt đầu từ ngày trăng non (mùng 1) và dài 29 hoặc 30 ngày, vì một chu kỳ trăng trung bình kéo dài khoảng 29,53 ngày. Còn lịch vạn niên là cuốn lịch dùng để tra cứu cho nhiều năm, ghi song song ngày dương lịch và ngày m lịch cùng các thông tin như can chi, tiết khí, ngày tốt xấu.",
+                    "score": 0.6058229
+                  },
+                  {
+                    "title": "Lịch Âm Hôm Nay 28/8/2026: Tra Cứu Lịch Âm Dương Chính Xác",
+                    "url": "https://lichamngay.com",
+                    "source": "lichamngay.com",
+                    "summary": "### MỘT SỐ CU HỎI VỀ NGÀY HÔM NAY (FAQ)\n\nLịch vạn niên hôm nay là ngày mấy?\n\nTheo lịch m năm 2026, hôm nay là ngày 16 tháng 7 m lịch năm Bính Ngọ tức là ngày 28/8/2026 dương lịch, nhằm ngày Thứ Sáu.\n\nHôm nay có phải là ngày hoàng đạo không?\n\nNgày 16/7 m lịch hôm nay là Ngày bình thường\n\nGiờ hoàng đạo hôm nay là giờ nào?\n\nCác khung giờ hoàng đạo ngày hôm nay là: Dần (3h-5h), Thìn (7h-9h), Tỵ (9h-11h), Thn (15h-17h), Dậu (17h-19h), Hợi (21h-23h) [...] 142 Canh Thn\n\n15☆3 Tn Dậu\n\n164 Nhm Tuất\n\n17☆5 Quý Hợi\n\n18☆6 Giáp Tý\n\n19☆7 Ất Sửu\n\nNgày Cách mạng tháng Tám thành công\n\nLễ Thất Tịch - Tết Ngu\n\n208 Bính Dần\n\nNgày sinh chủ tịch Tôn Đức Thắng\n\n21☆9 Đinh Mão\n\n2210 Mậu Thìn\n\n23☆11 Kỷ Tỵ\n\n24☆12 Canh Ngọ\n\n25☆13 Tn Mùi\n\n2614 Nhm Thn\n\n27☆15 Quý Dậu\n\nLễ Vu Lan - Tết Trung nguyên\n\n2816 Giáp Tuất\n\n29☆17 Ất Hợi\n\n30☆18 Bính Tý\n\n31☆19 Đinh Sửu\n\n## CHI TIẾT M LỊCH HÔM NAY [...] |  |  |\n --- |\n| Ngày hôm nay là ngày tốt hay xấu? | Kết luận: Hôm nay ngày 28/8/2026, tức ngày 16/7/2026 m lịch (ngày Giáp Tuất, tháng Bính Thn, năm Bính Ngọ) là Ngày Tương Đối Xấu. Không nên làm các việc quan trọng. Chỉ nên làm các công việc bắt buộc và thường ngày. Cần hạn chế mọi giao dịch và khởi sự mới. |",
+                    "score": 0.575517,
+                    "published_date": "Thu, 28 Nov 2024 17:00:00 GMT"
+                  },
+                  {
+                    "title": "Ngày hôm nay | Hôm nay là ngày bao nhiêu?",
+                    "url": "https://www.rapidtables.org/vi/tools/todays-date.html",
+                    "source": "rapidtables.org",
+                    "summary": "# Ngày hôm nay\n\n Đóng bảng điều khiển\n Trang chủ\n Đồng hồ báo thức\n Lịch\n Đồng hồ đếm ngược\n Thời điểm hiện tại\n Đồng hồ bấm giờ\n Ngày hôm nay",
+                    "score": 0.55275756
+                  },
+                  {
+                    "title": "Lịch âm hôm nay | Sắp Tết",
+                    "url": "https://www.saptet.com/hom-nay/lich-am",
+                    "source": "saptet.com",
+                    "summary": "Lịch\n Lịch hôm nay\n\nChuyển sang ngày mai\n\n# Lịch m hôm nay\n\nNgày 30, tháng 9, năm 2026\n\nHạ tuần tháng 9\n\nNgày Bính Tuất\n\nTháng Mậu Tuất\n\nNăm Bính Ngọ 2026\n\nTiết khí hôm nay là Lập đông, tháng đầu đông. Nếu tính theo lịch tiết khí thì m lịch hôm nay đang là tháng Kỷ Hợi (tháng 10), nghĩa là khác với lịch mặt trăng ở trên. Lịch m theo tiết khí thường được sử dụng trong các phép tính toán tử vi.\n\n## là ngày tốt hay xấu?\n\nBạch Hổ\n\nNgày Hắc đạo\n\nHành Thổ+\n\nỐc Thượng Thổ\n\nSao Tinh\n\nTinh Nhật Mã [...] Ngày m hôm nay bắt đầu từ 23 giờ đêm hôm qua - giờ Mậu Tý (ngày m lịch luôn bắt đầu và kết thúc sớm hơn ngày dương một giờ). Do vậy bát tự đầy đủ cho lịch m hôm nay là: Giờ Mậu Tý, ngày Bính Tuất, tháng Mậu Tuất, năm Bính Ngọ.\n\nBảng dưới đy liệt kê đầy đủ 12 khung giờ m lịch hôm nay. Những giờ được đánh dấu màu đỏ là giờ hoàng đạo.\n\n1. 23h - 1h\n\n   Mậu Tý\n\n   Thiên Lao\n2. 1h - 3h\n\n   Kỷ Sửu\n\n   Nguyên Vũ\n3. 3h - 5h\n\n   Canh Dần\n\n   Tư Mệnh\n4. 5h - 7h\n\n   Tn Mão\n\n   Cu Trần\n5. 7h - 9h",
+                    "score": 0.47139415,
+                    "published_date": "Fri, 15 May 2026 00:00:00 GMT"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "assistant_text": "Hôm nay là ngày **10 tháng 11 năm 2026**.\n\nVề giá xăng hôm nay, thông tin cập nhật như sau:\n\n1. **Xăng E10 RON 95-III**: 21.150 VNĐ/lít (giảm 2.080 VNĐ)\n2. **Xăng E5 RON 92**: 20.890 VNĐ/lít (giảm 2.310 VNĐ)\n3. **Dầu Diesel**: 28.690 VNĐ/lít (giảm 180 VNĐ)\n\nNguồn: [VnExpress](https://vnexpress.net/chu-de/gia-xang-dau-3026)\n\nNếu bạn cần thêm thông tin gì khác, hãy cho tôi biết!",
+          "tool_calls": [],
+          "tool_results": []
+        }
+      ],
+      "tool_events": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "giá xăng hôm nay",
+            "topic": "general",
+            "max_results": 5
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "giá xăng hôm nay",
+            "topic": "general",
+            "timeframe": null,
+            "max_age_hours": null,
+            "retrieved_at": "2026-11-10T16:55:10+07:00",
+            "items": [
+              {
+                "title": "Giá xăng dầu hôm nay RON 95, E5 RON 92, dầu Diesel, dầu hỏa",
+                "url": "https://vietnamnet.vn/gia-xang-dau-tag5537394984591514120.html",
+                "source": "vietnamnet.vn",
+                "summary": "Giá xăng dầu hôm nay (4/11) trên thị trường thế giới giảm xuống mức thấp nhất trong gần 4 tuần. Trong nước, giá các loại xăng và dầu diesel được điều chỉnh giảm vào tối qua, giá xăng còn hơn 23.000 đồng/lít.\n\nGiảm nhiều loại thuế về 0, giá xăng dầu Việt Nam thấp hơn các nước ln cận   icon avatar\n\nThị trường\n\n### Giảm nhiều loại thuế về 0, giá xăng dầu Việt Nam thấp hơn các nước ln cận [...] Giá xăng dầu hôm nay (6/11) trên thị trường quốc tế tăng do lo ngại về nguy cơ gián đoạn nguồn cung năng lượng toàn cầu. Trong nước, từ chiều qua, giá xăng dầu được điều chỉnh giảm, giá xăng E5RON92 về dưới 21.000 đồng/lít.\n\nGiá xăng giảm mạnh hơn 2.300 đồng/lít, dầu đồng loạt đi xuống\n\nThị trường\n\n### Giá xăng giảm mạnh hơn 2.300 đồng/lít, dầu đồng loạt đi xuống [...] Giá xăng dầu hôm nay (1/11), dầu thô trên thị trường quốc tế ghi nhận tuần biến động trái chiều khi giá dầu Brent hạ còn dầu WTI tăng. Trong nước, giá xăng tuần này giảm hơn 1.000 đồng/lít, trong khi dầu diesel và mazut tăng.\n\nGiá xăng đồng loạt giảm trong đêm, có loại giảm 1.804 đồng/lít\n\nThị trường\n\n### Giá xăng đồng loạt giảm trong đêm, có loại giảm 1.804 đồng/lít",
+                "score": 0.84918517,
+                "published_date": "Sun, 01 Nov 2026 11:00:00 GMT"
+              },
+              {
+                "title": "Giá xăng dầu hôm nay 7/11, tin giá xăng mới nhất",
+                "url": "https://vnexpress.net/chu-de/gia-xang-dau-3026",
+                "source": "vnexpress.net",
+                "summary": "VnExpress - Bao tieng Viet nhieu nguoi xem nhat    Thứ bảy, 7/11/2026  \n\nMới nhất \n\nTin theo khu vực \n\n Hà Nội\n TP HCM\n\nInternational\n \n\n# Giá xăng hôm nay\n\n## Giá bán lẻ xăng dầu hôm nay\n\n|  |  |  |\n --- \n| Mặt hàng | Giá từ 15:00 05/11/2026 (đơn vị: đồng/lít) | So với kỳ trước |\n| Xăng E10 RON 95-III | 21150 | - 2080 |\n| Xăng E5 RON 92 | 20890 | - 2310 |\n| Dầu Diesel | 28690 | - 180 |\n\nAnh tăng lãi suất lần đầu tiên sau 3 năm\n\n### Anh tăng lãi suất lần đầu tiên sau 3 năm [...] Từ 15h hôm nay, giá xăng dầu các loại cùng giảm 180-2.310 đồng một lít, theo đà diễn biến thị trường năng lượng thế giới.\n\nThứ trưởng Công Thương: Gần như không còn phản ánh về xăng E10\n\n### Thứ trưởng Công Thương: Gần như không còn phản ánh về xăng E10\n\nBộ Công Thương nhận 315 ý kiến về xăng sinh học, chủ yếu trong hai tháng đầu triển khai, còn tháng 9-10 gần như không có phản ánh, theo Thứ trưởng Lương Hoàng Thái.\n\nVụ bán chui 5,1 triệu lít xăng: 'Đừng mang mẹ già, con nhỏ ra xin giảm án' [...] ### Vụ bán chui 5,1 triệu lít xăng: 'Đừng mang mẹ già, con nhỏ ra xin giảm án'\n\nHà NộiTrước việc kế toán PVOil Vũng Áng nói \"thương nhớ mẹ già, con nhỏ\", xin án nhẹ để về chăm sóc, VKS hỏi khi tham ô 94 tỷ đồng đi đánh bạc có nhớ đến họ không mà nay \"đưa ra xin khoan hồng\".\n\nGiá xăng, dầu cùng giảm\n\n### Giá xăng, dầu cùng giảm\n\nTừ 22h hôm nay, giá xăng dầu các loại (trừ mazut) cùng giảm 920-1.370 đồng một lít.\n\nKế toán PVOil Vũng Áng bị đề nghị tù chung thn vì tham ô 94 tỷ đồng",
+                "score": 0.83225065,
+                "published_date": "Sun, 01 Nov 2026 12:00:00 GMT"
+              },
+              {
+                "title": "Giá xăng dầu hôm nay trên Báo Quân đội nhân dân Điện tử",
+                "url": "https://www.qdnd.vn/tag/gia-xang-dau-9.html",
+                "source": "qdnd.vn",
+                "summary": "Giá xăng dầu hôm nay (31-10): Tăng hơn 2%, lên mức cao nhất trong 6 tháng qua\n\n### Giá xăng dầu hôm nay (31-10): Tăng hơn 2%, lên mức cao nhất trong 6 tháng qua\n\n31/10/2026 05:40\n\nGiá dầu thế giới tăng hơn 2% trong phiên giao dịch ngày cuối cùng của tuần, chạm mốc cao nhất kể từ cuối tháng 4, khi giới đầu tư lo ngại xung đột Mỹ - Iran có thể leo thang sau cuộc bầu cử giữa nhiệm kỳ tại Mỹ. Trong nước, giá xăng dầu cũng được điều chỉnh tăng đồng loạt. [...] Giá xăng dầu hôm nay (30-10): Giá dầu thế giới quay đầu giảm\n\n### Giá xăng dầu hôm nay (30-10): Giá dầu thế giới quay đầu giảm\n\n30/10/2026 05:55\n\nGiá dầu giảm khi kỳ vọng Mỹ và Iran nối lại đàm phán hòa bình phần nào làm dịu lo ngại về nguy cơ gián đoạn nguồn cung do xung đột leo thang tại Trung Đông. Trong nước, giá xăng dầu được điều chỉnh tăng đồng loạt.\n\nTừ 15 giờ hôm nay (29-10), giá xăng dầu trong nước điều chỉnh tăng [...] ### Từ 15 giờ hôm nay (29-10), giá xăng dầu trong nước điều chỉnh tăng\n\n29/10/2026 15:22\n\nGiá xăng dầu các loại ở trong nước được điều chỉnh tăng từ 15 giờ hôm nay (29-10) theo quyết định của liên Bộ Công Thương - Tài chính.\n\nGiá xăng dầu hôm nay (29-10): Đảo chiều tăng\n\n### Giá xăng dầu hôm nay (29-10): Đảo chiều tăng\n\n29/10/2026 05:38\n\nGiá dầu thế giới tăng do giao tranh tại Yemen và vụ tấn công nhà máy lọc dầu ở Saudi Arabia. Trong nước, giá xăng dầu dự kiến điều chỉnh tăng.",
+                "score": 0.82895297,
+                "published_date": "Sun, 01 Nov 2026 21:00:00 GMT"
+              },
+              {
+                "title": "Giá xăng dầu hôm nay bao nhiêu 1 lít mới nhất?",
+                "url": "https://topi.vn/gia-xang-dau-hom-nay.html",
+                "source": "topi.vn",
+                "summary": "Công ty Cổ phần Dầu Qun đội - MIPEC cũng công bố bảng giá bán lẻ cho các sản phẩm an toàn không chì RON 95, lo sinh học E5 RON 92 và dầu Diezel mới nhất ngày hôm nay như sau:\n\n| SẢN PHẨM | VÙNG 1 (VNĐ/LÍT) | VÙNG 2 (VNĐ/LÍT) |\n| Xăng sinh học E10 RON 95-III | 22.600 đ | 23.050 đ |\n| Xăng sinh học E5 RON 92-II | 21.760 đ | 22.190 đ |\n| Diezel 0,001S mức 5 | 29.880 đ | 30.480 đ |\n| Diezel 0,05S mức 2 | 28.080 đ | 28.640 đ |\n\n### 4. Biểu đồ giá dầu thế giới\n\nXem thêm: [...] Dưới đy là bảng giá xăng dầu bán lẻ mới nhất từ ​​Tổng công ty Dầu Việt Nam - PVOIL vào kỳ điều chỉnh mới nhất:\n\n| Mặt hàng | Đồng/lít | Điều chỉnh (tăng/giảm) |\n| Xăng E10 RON 95 - III | 22.600 đ | -60 đ |\n| Xăng E5 RON 92 - II | 21.760 đ | -70 đ |\n| Dầu DO 0,05S - II | 28.080 đ | -460 đ |\n| Dầu DO 0,001S - V | 29.880 đ | -760 đ |\n\nCác giá trị đã bao gồm thuế GTGT và thuế bảo vệ môi trường​\n\nXem ngay: Giá vàng hôm nay\n\n### 3. Bảng giá xăng dầu Qun Đội - Mipec [...] | Sản phẩm | Vùng 1 (vnđ/lít) | Vùng 2 (vnđ/lít) |\n| Xăng E10 RON 95-V | 24.000 | 24.480 |\n| Xăng E10 RON 95-III | 22.600 | 23.050 |\n| Xăng E5 RON 92-II | 21.760 | 22.190 |\n| DO 0,001S-V | 29.880 | 30.470 |\n| DO 0,05S-II | 28.080 | 28.640 |\n| Dầu hỏa 2-K | 26.630 | 27.160 |\n\nCập nhật giá của Petrolimex vào lúc 15h và có hiệu lực cho đến kỳ điều chỉnh giá tiếp theo.\n\n### 2. Bảng giá xăng dầu PVOIL - Tổng công ty Dầu Việt Nam",
+                "score": 0.78963995
+              },
+              {
+                "title": "Giá xăng dầu hôm nay cập nhật mới nhất",
+                "url": "https://baomoi.com/tien-ich-gia-xang-dau.epi",
+                "source": "baomoi.com",
+                "summary": "| Loại xăng dầu | Giá vùng 1 (VNĐ) | Giá vùng 2 (VNĐ) |\n --- \n| Dầu hỏa 2-K | 28,600 | 29,170 |\n| DO 0,001S Mức 5 | 30,090 | 30,690 |\n| DO 0,05S Mức 2 | 28,690 | 29,260 |\n| Xăng E10 RON 95 Mức 3 | 21,150 | 21,570 |\n| Xăng E10 RON 95 Mức 5 | 22,650 | 23,100 |\n| Xăng E5 RON 92 | 24,220 | 24,700 |\n| Xăng E5 RON 92 Mức 2 | 20,890 | 21,300 |\n\nNguồn: giaxanghomnay.com\n\n## Loại xăng dầu [...] ## Loại xăng dầu\n\n Dầu hỏa 2-K\n DO 0,001S Mức 5\n DO 0,05S Mức 2\n Xăng E10 RON 95 Mức 3\n Xăng E10 RON 95 Mức 5\n Xăng E5 RON 92\n Xăng E5 RON 92 Mức 2\n\n## Tin tức Giáxăng dầuhôm nay\n\n### Giữ ổn định giá hàng hóa, dịch vụ do nhà nước quản lý đến hết năm 2026\n\n1284 liên quan\n\nPhó Thủ tướng Nguyễn Văn Thắng yêu cầu giữ ổn định giá hàng hóa, dịch vụ do nhà nước quản lý đến hết năm 2026; kiểm soát chặt giá cả, không để xảy ra biến động bất thường trong dịp cuối năm và Tết Nguyên đán 2027. [...] Tiện ích# Giá xăng dầu\n\n## Loại xăng dầu\n\n Dầu hỏa 2-K\n DO 0,001S Mức 5\n DO 0,05S Mức 2\n Xăng E10 RON 95 Mức 3\n Xăng E10 RON 95 Mức 5\n Xăng E5 RON 92\n Xăng E5 RON 92 Mức 2\n\n## Giá Xăng dầuNgày09-11-2026 00:30",
+                "score": 0.77055156,
+                "published_date": "Wed, 04 Nov 2026 06:00:00 GMT"
+              }
+            ]
+          }
+        },
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "hôm nay là ngày bao nhiêu",
+            "topic": "general",
+            "max_results": 5
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "hôm nay là ngày bao nhiêu",
+            "topic": "general",
+            "timeframe": null,
+            "max_age_hours": null,
+            "retrieved_at": "2026-11-10T16:55:12+07:00",
+            "items": [
+              {
+                "title": "Lịch Âm Hôm Nay - Âm lịch - Lịch Âm Dương 2026",
+                "url": "https://lichngaytot.com/lich-am-duong.html",
+                "source": "lichngaytot.com",
+                "summary": "Hôm nay là ngày 07/11/2026 dương lịch.\n\n### m lịch hôm nay là ngày bao nhiêu?\n\nLịch m hôm nay là ngày 29 tháng Chín năm 2026, theo lịch Can chi là ngày Ất Dậu tháng Mậu Tuất năm Bính Ngọ\n\n### Phn biệt Lịch m dương, Lịch m, Lịch dương\n\nThế giới có nhiều loại lịch khác nhau, nhưng hiện nay có 3 loại được sử dụng phổ biến nhất là: lịch dương, lịch m và lịch m dương (hoặc có thể gọi tương ứng lần lượt là dương lịch, m lịch và m dương lịch).\n\n#### 1. Lịch dương [...] - Hình thức: Người ta quy ra 1 tháng đủ sẽ có 30 ngày, còn tháng m nào thiếu chỉ có 29 ngày. Tính ra, đối với năm m lịch sẽ chỉ có 12 lần trăng tròn khuyết, tương ứng với một năm sẽ có 354 hoặc 355 ngày.\n\n- Phạm vi ứng dụng: Thời cổ đại, Trung Quốc và Ai Cập là hai nước đầu tiên sử dụng loại lịch này. Hiện nay, chỉ có đạo hồi là sử dụng lịch m thuần túy.\n\n#### 3. Lịch m dương [...] Dương lịch\n\n  3\n\n  Tháng 12\n\n  m lịch\n\n  25\n\n  Tháng 10\n Sự kiện diễn ra trong 25 ngày tới\n\n  Ngày Người khuyết tật Quốc tế\n\n  Thứ Năm: 3/12/2026 (25/10/2026 m lịch)\n\n  Giờ tốt: Kỷ Sửu (1h-3h), Nhm Thìn (7h-9h), Giáp Ngọ (11h-13h), Ất Mùi (13h-15h), Mậu Tuất (19h-21h), Kỷ Hợi (21h-23h)\n\n  Ngày Tn Hợi, tháng Kỷ Hợi, năm Bính Ngọ\n\n  Hỷ thần: Hướng Ty Nam | Tài thần: Hướng Ty Nam | Hắc thần: Hướng Đông Bắc\n\n  Vận xấu: Ngày Dương công kỵ , Nguyệt kỵ, Tam nương sát\n\n  Ngày Hoàng đạo Chi tiết",
+                "score": 0.69573146,
+                "published_date": "Tue, 03 Nov 2026 03:00:00 GMT"
+              },
+              {
+                "title": "Lịch Âm Hôm Nay - Âm Lịch Hôm Nay - Xem Lịch Âm",
+                "url": "https://www.xemlicham.com",
+                "source": "xemlicham.com",
+                "summary": "Lịch m thuần túy chỉ có 12 tháng, nên một năm m lịch dài khoảng 354 ngày, ngắn hơn năm dương lịch khoảng 11 ngày. Tiêu biểu là lịch Hồi giáo: vì không có tháng nhuận nên các tháng của lịch này trôi dần qua các mùa, phải khoảng 33 năm mới quay lại đúng vị trí cũ. [...] # Lịch m hôm nay\n\n## xem lịch m hôm nay\n\nNgày Dương Lịch: 7-11-2026\n\nNgày m Lịch: 29-9-2026\n\nNgày trong tuần: Thứ Bảy\n\nNgày Ất Dậu tháng Mậu Tuất năm Bính Ngọ\n\nNgày Huyền Vũ: xuất hành thường gặp cãi cọ, gặp việc xấu, không nên đi\n\nGiờ Hoàng Đạo: Tý (23-1), Dần (3-5), Mão (5-7), Ngọ (11-13), Mùi (13-15), Dậu (17-19)\n\nxem lịch m ngày m lịch xem ngày tốt xấu lịch m 2027 lịch m 2026 hôm nay m lịch hôm nay là bao nhiêu\n\n### M LỊCH NGÀY 7 THÁNG 11 2026 [...] ### Nguồn gốc lịch m\n\nLịch m (m lịch) là loại lịch tính theo chu kỳ tròn khuyết của Mặt Trăng. Mỗi tháng m lịch bắt đầu từ ngày trăng non (mùng 1) và dài 29 hoặc 30 ngày, vì một chu kỳ trăng trung bình kéo dài khoảng 29,53 ngày. Còn lịch vạn niên là cuốn lịch dùng để tra cứu cho nhiều năm, ghi song song ngày dương lịch và ngày m lịch cùng các thông tin như can chi, tiết khí, ngày tốt xấu.",
+                "score": 0.6058229
+              },
+              {
+                "title": "Lịch Âm Hôm Nay 28/8/2026: Tra Cứu Lịch Âm Dương Chính Xác",
+                "url": "https://lichamngay.com",
+                "source": "lichamngay.com",
+                "summary": "### MỘT SỐ CU HỎI VỀ NGÀY HÔM NAY (FAQ)\n\nLịch vạn niên hôm nay là ngày mấy?\n\nTheo lịch m năm 2026, hôm nay là ngày 16 tháng 7 m lịch năm Bính Ngọ tức là ngày 28/8/2026 dương lịch, nhằm ngày Thứ Sáu.\n\nHôm nay có phải là ngày hoàng đạo không?\n\nNgày 16/7 m lịch hôm nay là Ngày bình thường\n\nGiờ hoàng đạo hôm nay là giờ nào?\n\nCác khung giờ hoàng đạo ngày hôm nay là: Dần (3h-5h), Thìn (7h-9h), Tỵ (9h-11h), Thn (15h-17h), Dậu (17h-19h), Hợi (21h-23h) [...] 142 Canh Thn\n\n15☆3 Tn Dậu\n\n164 Nhm Tuất\n\n17☆5 Quý Hợi\n\n18☆6 Giáp Tý\n\n19☆7 Ất Sửu\n\nNgày Cách mạng tháng Tám thành công\n\nLễ Thất Tịch - Tết Ngu\n\n208 Bính Dần\n\nNgày sinh chủ tịch Tôn Đức Thắng\n\n21☆9 Đinh Mão\n\n2210 Mậu Thìn\n\n23☆11 Kỷ Tỵ\n\n24☆12 Canh Ngọ\n\n25☆13 Tn Mùi\n\n2614 Nhm Thn\n\n27☆15 Quý Dậu\n\nLễ Vu Lan - Tết Trung nguyên\n\n2816 Giáp Tuất\n\n29☆17 Ất Hợi\n\n30☆18 Bính Tý\n\n31☆19 Đinh Sửu\n\n## CHI TIẾT M LỊCH HÔM NAY [...] |  |  |\n --- |\n| Ngày hôm nay là ngày tốt hay xấu? | Kết luận: Hôm nay ngày 28/8/2026, tức ngày 16/7/2026 m lịch (ngày Giáp Tuất, tháng Bính Thn, năm Bính Ngọ) là Ngày Tương Đối Xấu. Không nên làm các việc quan trọng. Chỉ nên làm các công việc bắt buộc và thường ngày. Cần hạn chế mọi giao dịch và khởi sự mới. |",
+                "score": 0.575517,
+                "published_date": "Thu, 28 Nov 2024 17:00:00 GMT"
+              },
+              {
+                "title": "Ngày hôm nay | Hôm nay là ngày bao nhiêu?",
+                "url": "https://www.rapidtables.org/vi/tools/todays-date.html",
+                "source": "rapidtables.org",
+                "summary": "# Ngày hôm nay\n\n Đóng bảng điều khiển\n Trang chủ\n Đồng hồ báo thức\n Lịch\n Đồng hồ đếm ngược\n Thời điểm hiện tại\n Đồng hồ bấm giờ\n Ngày hôm nay",
+                "score": 0.55275756
+              },
+              {
+                "title": "Lịch âm hôm nay | Sắp Tết",
+                "url": "https://www.saptet.com/hom-nay/lich-am",
+                "source": "saptet.com",
+                "summary": "Lịch\n Lịch hôm nay\n\nChuyển sang ngày mai\n\n# Lịch m hôm nay\n\nNgày 30, tháng 9, năm 2026\n\nHạ tuần tháng 9\n\nNgày Bính Tuất\n\nTháng Mậu Tuất\n\nNăm Bính Ngọ 2026\n\nTiết khí hôm nay là Lập đông, tháng đầu đông. Nếu tính theo lịch tiết khí thì m lịch hôm nay đang là tháng Kỷ Hợi (tháng 10), nghĩa là khác với lịch mặt trăng ở trên. Lịch m theo tiết khí thường được sử dụng trong các phép tính toán tử vi.\n\n## là ngày tốt hay xấu?\n\nBạch Hổ\n\nNgày Hắc đạo\n\nHành Thổ+\n\nỐc Thượng Thổ\n\nSao Tinh\n\nTinh Nhật Mã [...] Ngày m hôm nay bắt đầu từ 23 giờ đêm hôm qua - giờ Mậu Tý (ngày m lịch luôn bắt đầu và kết thúc sớm hơn ngày dương một giờ). Do vậy bát tự đầy đủ cho lịch m hôm nay là: Giờ Mậu Tý, ngày Bính Tuất, tháng Mậu Tuất, năm Bính Ngọ.\n\nBảng dưới đy liệt kê đầy đủ 12 khung giờ m lịch hôm nay. Những giờ được đánh dấu màu đỏ là giờ hoàng đạo.\n\n1. 23h - 1h\n\n   Mậu Tý\n\n   Thiên Lao\n2. 1h - 3h\n\n   Kỷ Sửu\n\n   Nguyên Vũ\n3. 3h - 5h\n\n   Canh Dần\n\n   Tư Mệnh\n4. 5h - 7h\n\n   Tn Mão\n\n   Cu Trần\n5. 7h - 9h",
+                "score": 0.47139415,
+                "published_date": "Fri, 15 May 2026 00:00:00 GMT"
+              }
+            ]
+          }
+        }
+      ],
+      "ended_at": "2026-11-10T09:55:16"
+    }
+  ],
+  "model": "openai/gpt-4o-mini",
+  "updated_at": "2026-11-10T09:55:16"
+}

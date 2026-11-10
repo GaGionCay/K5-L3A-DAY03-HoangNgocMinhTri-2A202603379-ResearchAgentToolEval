@@ -10,6 +10,7 @@ from typing import Any
 from env_loader import load_lab_env
 from providers import make_provider
 from providers.base import ToolCall
+from time_context import current_time_context, time_context_message
 from tools import TOOL_FUNCTIONS, load_tool_declarations, to_openai_tools
 from versioning import artifact_version_dict, build_artifact_version
 
@@ -85,7 +86,11 @@ def run_model_tool_loop(
     model: str | None,
     max_tool_rounds: int,
 ) -> dict[str, Any]:
+    context = current_time_context()
     working_messages = list(messages)
+    # Refresh per user turn, including sessions that remain open past midnight.
+    position = 1 if working_messages and working_messages[0]["role"] == "system" else 0
+    working_messages.insert(position, time_context_message(context))
     rounds: list[dict[str, Any]] = []
     all_tool_events: list[dict[str, Any]] = []
 
@@ -103,6 +108,7 @@ def run_model_tool_loop(
             rounds.append(round_record)
             return {
                 "status": "answered",
+                "runtime_context": context,
                 "assistant_text": response.text or "",
                 "rounds": rounds,
                 "tool_events": all_tool_events,
@@ -117,33 +123,19 @@ def run_model_tool_loop(
             round_record["tool_results"].append(event)
             all_tool_events.append(event)
 
+            # Detect the clarification/pause tool by its output flag (rename-proof),
+            # not by a hard-coded tool name.
             result = event.get("result", {})
-            if isinstance(result, dict):
-                # Xử lý khi cần làm rõ thông tin (clarification)
-                if result.get("awaiting_user"):
-                    question = result.get("question") or call.args.get("question") or "Bạn bổ sung thêm thông tin nhé."
-                    rounds.append(round_record)
-                    return {
-                        "status": "waiting_for_user",
-                        "assistant_text": question,
-                        "rounds": rounds,
-                        "tool_events": all_tool_events,
-                    }
-                
-                # BỔ SUNG MỚI: Xử lý khi cần người dùng xác nhận gửi (needs_confirmation)
-                if result.get("status") == "needs_confirmation":
-                    draft_text = result.get("draft") or call.args.get("text", "")
-                    confirm_msg = (
-                        f"⚠️ Nội dung cần xác nhận trước khi gửi:\n\n\"{draft_text}\"\n\n"
-                        "Bạn có đồng ý phát hành/gửi nội dung này không? (Trả lời 'có' để xác nhận hoặc nhập chỉnh sửa mới)"
-                    )
-                    rounds.append(round_record)
-                    return {
-                        "status": "needs_confirmation",
-                        "assistant_text": confirm_msg,
-                        "rounds": rounds,
-                        "tool_events": all_tool_events,
-                    }
+            if isinstance(result, dict) and result.get("awaiting_user"):
+                question = result.get("question") or call.args.get("question") or "Bạn bổ sung thêm thông tin nhé."
+                rounds.append(round_record)
+                return {
+                    "status": "waiting_for_user",
+                    "runtime_context": context,
+                    "assistant_text": question,
+                    "rounds": rounds,
+                    "tool_events": all_tool_events,
+                }
 
             non_clarification_events.append(event)
 
@@ -152,6 +144,7 @@ def run_model_tool_loop(
 
     return {
         "status": "max_tool_rounds",
+        "runtime_context": context,
         "assistant_text": f"Stopped after {max_tool_rounds} tool rounds. Inspect the transcript for details.",
         "rounds": rounds,
         "tool_events": all_tool_events,
