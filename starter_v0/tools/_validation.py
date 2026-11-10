@@ -15,11 +15,12 @@ def text(value: Any, name: str, *, allow_empty: bool = False) -> str:
     return value
 
 
-def integer(value: Any, name: str, *, maximum: int | None = None) -> int:
+def integer(value: Any, name: str, *, maximum: int | None = None, minimum: int = 1) -> int:
     if isinstance(value, str) and re.fullmatch(r"[0-9]+", value.strip()):
         value = int(value.strip())
-    if type(value) is not int or value < 1:
-        raise ValueError(f"{name} must be a positive integer")
+    if type(value) is not int or value < minimum:
+        description = "non-negative" if minimum == 0 else "positive"
+        raise ValueError(f"{name} must be a {description} integer")
     if maximum is not None and value > maximum:
         raise ValueError(f"{name} must be at most {maximum}")
     return value

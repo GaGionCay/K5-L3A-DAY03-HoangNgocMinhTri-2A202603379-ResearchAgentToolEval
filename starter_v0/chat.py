@@ -10,6 +10,7 @@ from typing import Any
 from env_loader import load_lab_env
 from providers import make_provider
 from providers.base import ToolCall
+from time_context import current_time_context, time_context_message
 from tools import TOOL_FUNCTIONS, load_tool_declarations, to_openai_tools
 from versioning import artifact_version_dict, build_artifact_version
 
@@ -85,7 +86,11 @@ def run_model_tool_loop(
     model: str | None,
     max_tool_rounds: int,
 ) -> dict[str, Any]:
+    context = current_time_context()
     working_messages = list(messages)
+    # Refresh per user turn, including sessions that remain open past midnight.
+    position = 1 if working_messages and working_messages[0]["role"] == "system" else 0
+    working_messages.insert(position, time_context_message(context))
     rounds: list[dict[str, Any]] = []
     all_tool_events: list[dict[str, Any]] = []
 
@@ -103,6 +108,7 @@ def run_model_tool_loop(
             rounds.append(round_record)
             return {
                 "status": "answered",
+                "runtime_context": context,
                 "assistant_text": response.text or "",
                 "rounds": rounds,
                 "tool_events": all_tool_events,
@@ -125,6 +131,7 @@ def run_model_tool_loop(
                 rounds.append(round_record)
                 return {
                     "status": "waiting_for_user",
+                    "runtime_context": context,
                     "assistant_text": question,
                     "rounds": rounds,
                     "tool_events": all_tool_events,
@@ -137,6 +144,7 @@ def run_model_tool_loop(
 
     return {
         "status": "max_tool_rounds",
+        "runtime_context": context,
         "assistant_text": f"Stopped after {max_tool_rounds} tool rounds. Inspect the transcript for details.",
         "rounds": rounds,
         "tool_events": all_tool_events,

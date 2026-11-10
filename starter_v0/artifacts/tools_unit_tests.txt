@@ -1,7 +1,7 @@
 Offline verification summary (not a new live API run)
 
-Verified suite after the evaluator fix: 184 passed, 0 failed, 0 errors, 0 skipped.
-Composition: 175 existing tests + 9 tests in tests/test_eval_structured_args.py.
+Verified suite after the runtime-date/freshness fix: 210 passed, 0 failed, 0 errors, 0 skipped.
+Composition: 175 tool tests + 9 evaluator tests + 26 tests in tests/test_time_context.py.
 Verified with pytest on Python 3.12; HTTP requests mocked; PDFs generated locally.
 Ordinary user command: python -m pytest
 
@@ -10,3 +10,5 @@ Evaluator regression suite: 8 failed / 1 passed before comparator fix, then 9 pa
 The final live group result is separate evidence: runs/v5-evalfix_B_group_openrouter_20261110T144452606199.json (10/10).
 The final base result is separate evidence: runs/v5-tools-complete_B_base_openrouter_20261110T122338476859.json (19/20).
 CLI transcript contains a human-reviewed missing-account error on turn 2; it is not marked all-pass.
+
+Date tests cover UTC-to-Vietnam boundaries, session midnight rollover, source-date preservation and explicit live-fetch cache policy. No current gold price was verified by these offline tests.

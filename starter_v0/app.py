@@ -6,6 +6,7 @@ import streamlit as st
 
 from chat import now_iso, run_model_tool_loop, write_transcript
 from providers import make_provider
+from time_context import current_time_context
 from tools import load_tool_declarations, to_openai_tools
 from versioning import artifact_version_dict, build_artifact_version
 
@@ -13,7 +14,7 @@ from versioning import artifact_version_dict, build_artifact_version
 ROOT = Path(__file__).resolve().parent
 PROMPT_PATH = ROOT / "artifacts" / "system_prompt.md"
 TOOLS_PATH = ROOT / "artifacts" / "tools.yaml"
-APP_VERSION = "v5-evalfix"
+APP_VERSION = "v6-date-context"
 
 st.set_page_config(
     page_title="Research Agent",
@@ -55,6 +56,7 @@ session = st.session_state.research_session
 
 st.title("🔎 Research Agent")
 st.caption("Bạn muốn tìm hiểu thông tin gì hôm nay?")
+st.caption(f"Hôm nay: {current_time_context()['display_date']} · Giờ Việt Nam (UTC+7)")
 
 for message in session["history"]:
     with st.chat_message(message["role"]):

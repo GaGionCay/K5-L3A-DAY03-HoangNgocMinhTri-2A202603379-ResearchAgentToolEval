@@ -73,9 +73,11 @@ tools:
     required:
     - query
 - name: lookup
-  description: Tìm thông tin TRÊN WEB. Dùng topic=news cho tin tức, general cho thông tin chung. timeframe=day
-    cho hôm nay; week, month hoặc year cho khoảng tương ứng. Giữ query tập trung vào chủ đề. Không dùng
-    để tìm tweet hay đọc URL đã có. Nếu đổi nguồn ở lượt sau, theo nguồn mới nhất.
+  description: Tìm thông tin TRÊN WEB. Dùng topic=news và timeframe=day cho tin tức hôm nay; week/month/year
+    cho khoảng thời gian được yêu cầu. Với giá cả, tỷ giá hoặc thời tiết hiện tại, dùng topic=general,
+    max_age_hours=0 và bỏ timeframe để đọc trang cập nhật liên tục; thêm ngày Việt Nam hiện tại trong
+    query khi cần. Kiểm tra ngày nguồn, không tự gọi dữ liệu cũ là giá hôm nay. Không dùng để tìm tweet
+    hoặc đọc URL đã biết.
   parameters:
     type: object
     properties:
@@ -97,14 +99,21 @@ tools:
         - week
         - month
         - year
-        default: week
-        description: day=hôm nay, week=tuần này, month=tháng này, year=năm này. Mặc định code là week.
+        description: day=hôm nay, week=tuần này, month=tháng này, year=năm này; chỉ truyền khi cần lọc
+          ngày xuất bản. Bỏ qua để không giới hạn ngày; giá/thời tiết cập nhật liên tục nên bỏ timeframe
+          và dùng max_age_hours.
       max_results:
         type: integer
         default: 5
         description: Số kết quả tối đa, số nguyên 1-20.
         minimum: 1
         maximum: 20
+      max_age_hours:
+        type: integer
+        minimum: 0
+        maximum: 720
+        description: 'Độ cũ tối đa của bản cache Tavily tính bằng giờ: 0 để fetch live, 1-720 để giới
+          hạn tuổi cache. Không chứng minh thời điểm của con số giá trong nội dung.'
     required:
     - query
 - name: fetch

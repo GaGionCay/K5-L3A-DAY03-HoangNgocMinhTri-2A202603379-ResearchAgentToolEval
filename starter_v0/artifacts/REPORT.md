@@ -16,7 +16,7 @@
 
 **Research Agent — tìm tin, đọc bài và tổng hợp bản tin**
 
-**Bản demo hiện tại: 11 tool · 1 tool nhóm tự viết · 184 test PASS.**
+**Bản demo hiện tại: 11 tool · 1 tool nhóm tự viết · 210 test PASS.**
 
 ## A1. Agent này làm được gì
 
@@ -46,7 +46,7 @@ Link demo là link tạm thời, hoạt động khi nhóm giữ Streamlit và Cl
 
 Tool mới của nhóm là **`deduplicate`**. Khi tổng hợp nhiều danh sách kết quả, tool giúp loại các bản ghi lặp lại trước bước trình bày bản tin; tool chạy cục bộ và không cần API key.
 
-**Đã kiểm tra:** Bộ test offline đạt **184 PASS, 0 FAIL, 0 ERROR, 0 SKIP**, gồm contract, input hợp lệ/sai kiểu và các nhánh lỗi. Test HTTP dùng mock; khả năng gọi dịch vụ thật còn phụ thuộc API key, quyền truy cập và hạn mức. Telegram cần cấu hình bot/kênh và xác nhận của người dùng trước khi gửi.
+**Đã kiểm tra:** Bộ test offline đạt **210 PASS, 0 FAIL, 0 ERROR, 0 SKIP**, gồm contract, input hợp lệ/sai kiểu và các nhánh lỗi. Test HTTP dùng mock; khả năng gọi dịch vụ thật còn phụ thuộc API key, quyền truy cập và hạn mức. Telegram cần cấu hình bot/kênh và xác nhận của người dùng trước khi gửi.
 
 ## A3. Câu hỏi mẫu để thử
 
@@ -159,7 +159,7 @@ Transcript CLI: [v5-evalfix_openrouter_20261110T144638732811.transcript.json](..
 | Telegram send | tests/test_tool_validation.py; tests/test_tools_todo.py; G10 | Guardrail và gửi HTTP bằng mock PASS; G10 hỏi xác nhận PASS. Chưa có bằng chứng gửi Telegram thật trong bộ transcript CLI này. |
 | arXiv / policy | tests/test_tool_validation.py; tests/test_tools_todo.py | Test metadata, retry 429, PDF cục bộ và trust boundary PASS. Không dùng test mock để khẳng định mọi API live hoạt động. |
 | UI | app.py; transcripts/ui_v3_*.transcript.json; link ở Phần A | Đã có UI và transcript theo phiên. Link tunnel tạm, phụ thuộc máy và hai tiến trình còn chạy. |
-| Test offline | tests/; artifacts/tools_unit_tests.txt | 184 PASS, 0 FAIL, 0 ERROR, 0 SKIP: 175 test trước đó và 9 test mới cho bộ chấm. |
+| Test offline | tests/; artifacts/tools_unit_tests.txt | 210 PASS, 0 FAIL, 0 ERROR, 0 SKIP: 175 test tool trước đó, 9 test bộ chấm và 26 test ngày giờ/độ mới nguồn. |
 | Sửa bộ chấm eval | run_eval.py; tests/test_eval_structured_args.py; hai group run JSON | Giữ so sánh scalar list không phụ thuộc thứ tự; list object/nested list giữ thứ tự. Không đổi dữ liệu eval để né lỗi. |
 
 Đã thay toàn bộ 17 stub TODO bằng test có assertion. Các lời gọi HTTP trong unit test được mock, không tiêu credit và không gửi Telegram thật. Năm test PDF dùng thư mục tạm riêng để tránh lỗi quyền truy cập `pytest-of-Admin` trên Windows.
@@ -173,6 +173,14 @@ Các lỗi tool có regression test:
 Nhóm test chọn để kiểm tra ba lỗi trên có **5 FAIL, 3 PASS trên code cũ**, rồi PASS sau sửa; log trước sửa: `artifacts/tools_regression_before.txt`. Sau đó bổ sung 9 test bộ chấm: trước sửa **8 FAIL, 1 PASS**, sau sửa cả 9 PASS; test CLI offline còn xác nhận `deduplicate` thực thi và tạo run có measured_cases=1 thay vì provider_error.
 
 Ví dụ khác biệt giữa hai lớp kiểm tra: model eval có thể thấy đúng tên `send` và args; unit test mới xác minh chuỗi `"false"` thực sự không được phép đi qua nhánh gửi. Tương tự, tool deduplicate đã qua unit test nhưng scorer cũ vẫn làm G01 lỗi do không chấm được danh sách object.
+
+### B5.1. Bổ sung kiểm tra ngày hiện tại — v6-date-context
+
+Một lượt hỏi giá vàng trên Cloud gắn nhãn “hôm nay” với 07/11/2026 trong khi người dùng đang hỏi ngày 10/11/2026. Kiểm tra code xác nhận vòng chat chưa cấp ngày hiện tại cho model, lookup mặc định lọc theo tuần và không giữ trường ngày của nguồn. Chưa có transcript Cloud của riêng lượt lỗi để xác định chính xác các arguments model đã gửi.
+
+Bản sửa cấp thời gian UTC+7 mới mỗi lượt, ghi `runtime_context` vào transcript, hiển thị ngày Việt Nam trên UI và giữ `published_date` khi API có trả. Lookup bỏ mặc định lọc theo tuần; thêm `max_age_hours=0` để yêu cầu lấy trang live khi hỏi giá/thời tiết cập nhật liên tục. Ngày nguồn và thời điểm truy xuất được phân biệt; model được yêu cầu không đổi nhãn số liệu cũ thành giá hôm nay nếu chưa xác minh được thời điểm.
+
+Thêm **26 test** cho chuyển ngày UTC/Vietnam, phiên qua nửa đêm, metadata các nhánh thoát và payload/nguồn thời gian; tổng **210 PASS**. Đây là kiểm tra offline, chưa phải bằng chứng model trên Cloud đã trả đúng giá hiện tại. Các điểm base 95% và group 100% ở B1 thuộc bản v5 trước thay đổi này; cần eval mới nếu muốn báo điểm cho v6. Chi tiết: [date_context_fix.md](date_context_fix.md).
 
 ## B6. Reflection
 
