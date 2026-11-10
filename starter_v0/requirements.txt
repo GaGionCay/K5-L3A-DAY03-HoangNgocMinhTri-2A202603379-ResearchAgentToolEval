@@ -8,3 +8,5 @@ PyYAML>=6.0
 pypdf>=4.0.0
 # Tool unit tests:
 pytest>=8.0.0
+# Demo UI (Phan 5 - Cuong):
+streamlit==1.56.0
