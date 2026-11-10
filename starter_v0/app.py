@@ -13,6 +13,7 @@ from versioning import artifact_version_dict, build_artifact_version
 ROOT = Path(__file__).resolve().parent
 PROMPT_PATH = ROOT / "artifacts" / "system_prompt.md"
 TOOLS_PATH = ROOT / "artifacts" / "tools.yaml"
+APP_VERSION = "v5-evalfix"
 
 st.set_page_config(
     page_title="Research Agent",
@@ -22,8 +23,8 @@ st.set_page_config(
 
 
 def new_session():
-    version = build_artifact_version("v3", PROMPT_PATH, TOOLS_PATH)
-    session_id = f"ui_v3_{uuid4().hex}"
+    version = build_artifact_version(APP_VERSION, PROMPT_PATH, TOOLS_PATH)
+    session_id = f"ui_{APP_VERSION}_{uuid4().hex}"
     return {
         "history": [],
         "prompt": PROMPT_PATH.read_text(encoding="utf-8"),
