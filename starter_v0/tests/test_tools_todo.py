@@ -1,4 +1,14 @@
 """Offline tool tests: local behavior, mocked API requests and regression coverage."""
+"""TODO CP3 (student): Tool Unit Test Challenge.
+
+Each test below is a stub. Replace `pytest.skip(...)` with a real test.
+Patterns to copy are in test_tools_examples.py. Fixtures are in conftest.py.
+
+Rules:
+- Offline only: mock HTTP with `fake_http`, set fake keys with `monkeypatch.setenv`.
+- One behaviour per test. Name the test after the behaviour, not the function.
+- Done = `pytest tests/ -v` shows 0 skipped, 0 failed.
+"""
 from __future__ import annotations
 
 import pytest
@@ -7,6 +17,7 @@ from conftest import FakeResponse  # noqa: F401  (you will need it)
 from tools import TOOL_FUNCTIONS  # noqa: F401
 from tools.send.tool import _approve_send_after_user_confirmation
 
+TODO = "TODO CP3 (student): implement this test"
 
 
 # ---------------- clarify ----------------

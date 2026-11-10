@@ -1,5 +1,5 @@
 {
-  "dataset_id": "day03_research_group",
+  "dataset_id": "day03_v2_research_group",
   "dataset_role": "group",
   "description": "10 case nhóm: 5 single turn và 5 multi turn.",
   "allowed_failure_types": [

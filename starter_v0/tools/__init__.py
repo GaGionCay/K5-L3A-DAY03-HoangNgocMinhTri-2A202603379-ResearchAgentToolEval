@@ -40,6 +40,8 @@ TOOL_FUNCTIONS = {
     "deduplicate": deduplicate,
     # Alias to papers to preserve backwards compatibility and prevent routing failures
     "arxiv_search": arxiv_search,
+    # TODO CP3 (student): register your new tool here, e.g. "my_tool": my_tool_function,
+    # then declare it in artifacts/tools.yaml and run `pytest tests/test_tool_contract.py`.
 }
 
 
