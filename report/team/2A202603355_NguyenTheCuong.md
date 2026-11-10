@@ -1,95 +1,70 @@
-# Báo cáo cá nhân — NguyenTheCuong-2A202603355
+# Báo cáo cá nhân — Nguyễn Thế Cường - 2A202603355
 
 ## 1. Thông tin thành viên
 
-- Họ tên: Nguyễn Thế Cường.
-- MSSV: 2A202603355.
-- Email: ntcuong1113@gmail.com.
-- Lớp: L3A.
-- GitHub: [Chill2004](https://github.com/Chill2004).
-- Bài tập: Day 03 — Research Agent Tool Eval.
-- Repository nhóm: [GaGionCay/ResearchAgentToolEval](https://github.com/GaGionCay/K5-L3A-DAY03-HoangNgocMinhTri-2A202603379-ResearchAgentToolEval).
-- Nhánh cá nhân: [cuong](https://github.com/GaGionCay/K5-L3A-DAY03-HoangNgocMinhTri-2A202603379-ResearchAgentToolEval/tree/cuong).
+- **Họ tên:** Nguyễn Thế Cường
+- **MSSV:** 2A202603355
+- **Email:** [ntcuong1113@gmail.com](mailto:ntcuong1113@gmail.com)
+- **GitHub:** [Chill2004](https://github.com/Chill2004)
+- **Vai trò:** Demo & Báo cáo — thành viên phụ trách Phần 5
 
 ## 2. Phần việc phụ trách
 
-Tôi phụ trách **Phần 5 — Demo và báo cáo**. Công việc gồm chuẩn bị giao diện dùng thử, link demo, thực hiện hội thoại live và lưu transcript, sau đó tổng hợp nội dung giới thiệu cùng kết quả của nhóm vào báo cáo.
+Phụ trách chuẩn bị giao diện dùng thử cho research agent, tổ chức các lượt chat demo, lưu bằng chứng hội thoại và tổng hợp báo cáo từ kết quả của nhóm. Các đầu việc chính gồm:
 
-Theo phân vai đã thống nhất, Ánh phụ trách đánh giá và quản lý phiên bản; Trí phụ trách prompt và khai báo tool; Bảo phát triển tool; Nam phụ trách eval và unit test. Phần của tôi tập trung vào cách dùng agent, trải nghiệm demo và bằng chứng hội thoại. Kết quả đánh giá, code tool và test của các phần khác được dùng làm đầu vào khi tổng hợp, không ghi thành đóng góp cá nhân của tôi.
+- Xây dựng và chạy giao diện Streamlit trong `starter_v0/app.py`.
+- Chuẩn bị link demo và câu hỏi mẫu để nhóm khác có thể dùng thử.
+- Thực hiện ít nhất 3 lượt chat live, quan sát cách agent gọi tool và lưu transcript.
+- Chuẩn bị Phần A giới thiệu agent trước demo; tổng hợp Phần B sau khi nhận kết quả từ các thành viên.
+- Đối chiếu nội dung báo cáo với file, phiên bản và log thực tế.
 
 ## 3. Đóng góp cụ thể
 
-### Chuẩn bị giao diện Streamlit
+### 3.1. Xây dựng giao diện và chuẩn bị demo
 
-Tôi chuẩn bị giao diện trong `starter_v0/app.py` để người dùng có thể thử agent qua ô chat. Giao diện hiển thị lịch sử hội thoại, có nút **Cuộc trò chuyện mới** và **Tải transcript**. Dependency Streamlit được bổ sung trong requirements.txt để có thể chạy lại giao diện.
+- Chuẩn bị UI Streamlit với ô nhập yêu cầu, lịch sử hội thoại, nút **Cuộc trò chuyện mới** và **Tải transcript**.
+- Bổ sung dependency Streamlit trong `starter_v0/requirements.txt` để chạy giao diện.
+- Hiển thị ngày Việt Nam UTC+7 và lưu thông tin thời gian trong transcript.
+- Điều chỉnh UI để dùng context ngày giờ chung khi chạy với bản v6, đồng thời vẫn hoạt động với starter chưa có phần xử lý này.
+- Chuẩn bị các câu hỏi mẫu về tìm tin web, lấy bài đăng X/Twitter, đọc URL và hỏi thông tin còn thiếu.
+- Đã dùng và deploy lên web [link Streamlit Cloud](https://k5-l3a-day03-hoangngocminhtri-2a202603379-researchagenttooleva.streamlit.app)
 
-UI có dòng ngày Việt Nam UTC+7 và lưu thông tin thời gian trong transcript. Khi ghép với bản v6, UI dùng context ngày giờ từ vòng chat chung. Khi chạy với starter chưa có phần này, UI cung cấp context ngày giờ riêng. Cách xử lý đó giúp branch cá nhân vẫn chạy được mà không phải đưa kèm toàn bộ thay đổi prompt/tool/test của nhóm.
+### 3.2. Thực hiện chat live và lưu transcript
 
-Lệnh chạy UI từ thư mục gốc repository:
+- Phiên CLI `v5-evalfix` có **3 lượt live**: tìm tin robotics trên web, yêu cầu lấy bài đăng X khi chưa có tài khoản, rồi bổ sung tài khoản nasa.
+- Rà soát các lượt hội thoại để kiểm tra cách agent xử lý yêu cầu thiếu thông tin và phản hồi khi người dùng bổ sung tài khoản.
+- Ở lượt bổ sung nasa, agent đổi tài khoản và giữ `limit=2` từ yêu cầu trước.
+- Phiên UI `v6-date-context` có **2 lượt thử**, ghi nhận ngày **10/11/2026, UTC+7** đúng; thời điểm áp dụng và đơn vị của giá vẫn chưa được xác minh đầy đủ.
+- Lưu transcript kèm thông tin phiên bản để nhóm có thể xem lại và đối chiếu kết quả demo.
+
+### 3.3. Kiểm tra UI và tổng hợp báo cáo
+
+- Kiểm tra UI offline bằng Streamlit AppTest với provider/tool mô phỏng: ba lượt hội thoại, hỏi lại, giữ lịch sử, xử lý UTC+7, tải transcript và tạo phiên mới.
+- Kiểm tra trên cả starter và bản v6 tích hợp; UI không chèn trùng context ngày giờ. Các lần kiểm tra này không gọi API thật và không thay thế chat live.
+- Chuẩn bị nội dung giới thiệu, danh sách chức năng và kịch bản demo để phục vụ Phần A.
+- Đối chiếu transcript, run log và kết quả của nhóm khi tổng hợp Phần B; bản báo cáo cuối vẫn cần nhóm xác nhận.
+
+Lệnh chạy giao diện từ thư mục gốc repository:
 
 ```powershell
 cd starter_v0
 python -m streamlit run app.py
 ```
 
-Sau đó mở `http://localhost:8501`.
-
-### Chuẩn bị nội dung và luồng demo
-
-Tôi chuẩn bị phần giới thiệu ngắn về agent, danh sách chức năng và các câu hỏi mẫu: tìm tin web, lấy bài đăng theo tài khoản, đọc URL và thử tình huống thiếu thông tin. Luồng demo đi từ một yêu cầu đầy đủ đến một yêu cầu cần hỏi lại để người xem thấy cách agent xử lý hội thoại nhiều lượt.
-
-Ở giai đoạn thử trước, nhóm đã dùng [link Streamlit Cloud](https://k5-l3a-day03-hoangngocminhtri-2a202603379-researchagenttooleva.streamlit.app). Link này là bằng chứng về bản demo đã sử dụng; chưa xác nhận bản đang triển khai được lấy từ branch cuong mới nhất.
-
-### Lưu và xem lại transcript thực tế
-
-Tôi đưa 8 transcript đã có từ ntc sang branch cuong, giữ nguyên phiên bản và nội dung gốc. Trong đó, phiên CLI `v5-evalfix` có 3 lượt live:
-
-| Lượt | Yêu cầu của người dùng | Tool call thực tế | Nhận xét |
-|---|---|---|---|
-| 1 | Tìm 3 tin tức về robotics trên web trong tuần này, kèm nguồn. | `lookup` với query robotics, topic news, timeframe week và max_results 3. | Agent chọn đúng nguồn web và tham số; câu trả lời có liên kết. Chưa kiểm chứng thủ công từng bài gốc. |
-| 2 | Lấy 2 bài đăng mới nhất trên X giúp tôi. | `timeline` với screenname robotics và limit 2. | Chưa đúng: agent lấy chủ đề trước làm tên tài khoản thay vì hỏi lại. |
-| 3 | Tài khoản nasa. | `timeline` với screenname nasa và limit 2. | Agent tiếp nhận tài khoản được sửa và giữ số lượng từ lượt trước. |
-
-Phiên UI `v6-date-context` có thêm 2 lượt thử về giá vàng, ngày hiện tại và giá xăng. Runtime context ghi đúng **10/11/2026, UTC+7** và lượt hỏi ngày được trả lời đúng. Tuy nhiên, thời điểm áp dụng và đơn vị của giá vẫn chưa được xác minh đầy đủ. Tôi giữ nhận xét này trong phần bằng chứng thay vì coi mọi lượt có trạng thái answered là thành công.
-
-Các phiên trên là bằng chứng đã có trước khi tách branch; tôi không đổi nhãn để coi chúng là những lần thử mới của bản UI hiện tại.
-
-### Kiểm tra UI và chuẩn bị báo cáo
-
-UI được kiểm tra offline bằng Streamlit AppTest với provider và tool mô phỏng. Kịch bản kiểm tra gồm ba lượt tìm tin, hỏi lại tài khoản và tiếp nhận nasa; đồng thời kiểm tra lịch sử, limit=2, context UTC+7, nút tải transcript và tạo phiên mới. Cả bản starter và bản v6 tích hợp đều qua kiểm tra này, không chèn trùng context ngày giờ.
-
-Tôi dùng ChatGPT/Codex hỗ trợ chuẩn bị nội dung giới thiệu và đối chiếu báo cáo với transcript, run log. Nội dung tổng hợp v6 hiện có trong working tree để nhóm tham khảo. Hai commit cá nhân đã push chỉ chứa UI, dependency và transcript như liệt kê dưới đây; chưa bao gồm báo cáo nhóm cuối hay toàn bộ code tích hợp.
+Sau khi chạy, mở `http://localhost:8501`, tạo cuộc trò chuyện mới và tải transcript sau phiên thử. Chỉ ghi kết quả đã quan sát được vào báo cáo.
 
 ## 4. Bằng chứng
 
-### File và commit
-
-| Bằng chứng | Nội dung có thể đối chiếu |
-|---|---|
-| [starter_v0/app.py](../../starter_v0/app.py) | Giao diện chat, tạo phiên mới, tải transcript và xử lý context ngày giờ. |
-| [starter_v0/requirements.txt](../../starter_v0/requirements.txt) | Dependency Streamlit dành cho UI. |
-| [Thư mục transcript](../../starter_v0/transcripts) | 8 transcript giữ nguyên phiên bản và kết quả cũ. |
-| [CLI v5-evalfix — 3 lượt](../../starter_v0/transcripts/v5-evalfix_openrouter_20261110T144638732811.transcript.json) | Phiên live tìm tin, thiếu account và sửa sang nasa; có lỗi ở lượt 2. |
-| [UI v6-date-context — 2 lượt](../../starter_v0/transcripts/ui_v6-date-context_48233e87253141f3b1511624408b2be5.transcript.json) | Context ngày đúng, cùng giới hạn khi trả lời giá hiện tại. |
-| [Commit 343abac](https://github.com/GaGionCay/K5-L3A-DAY03-HoangNgocMinhTri-2A202603379-ResearchAgentToolEval/commit/343abace8f838b0768a73c84aff75cb06c10dcd8) | Đưa app.py, dependency UI và 8 transcript lên branch cuong. |
-| [Commit a619b44](https://github.com/GaGionCay/K5-L3A-DAY03-HoangNgocMinhTri-2A202603379-ResearchAgentToolEval/commit/a619b44ae5ef08c1ece65d0ef1c4156053ebc067) | Chỉ cập nhật app.py để tương thích starter và bản v6. |
-
-Báo cáo nhóm theo cấu trúc nộp bài nằm ở `report/team/group_report.md`; nhóm cần chốt nội dung và bản tích hợp trước khi nộp cuối. Các ghi nhận kỹ thuật v6 hiện có trong `starter_v0/artifacts/REPORT.md` ở working tree không tự đồng nghĩa đã nằm trong commit nộp của nhóm.
-
-### AI/công cụ đã dùng và cách kiểm tra kết quả
-
-| Công cụ | Mục đích sử dụng | Cách kiểm tra |
-|---|---|---|
-| ChatGPT/Codex | Hỗ trợ viết/chỉnh UI, đọc lỗi, đối chiếu file và soạn báo cáo. | Xem lại diff, kiểm tra file thuộc Phần 5, đối chiếu nội dung với commit và transcript thực tế. |
-| Streamlit và AppTest | Chạy giao diện và kiểm tra luồng UI offline. | Dùng provider/tool mô phỏng để kiểm tra ba lượt, lịch sử, hỏi lại, UTC+7, tải transcript và tạo phiên mới; không gọi API thật hoặc ghi thành transcript live. |
-| Transcript JSON | Xem agent đã gọi tool và trả lời như thế nào. | Đọc user request, tool call, tham số, dữ liệu trả về và version/hash; ghi rõ lỗi hoặc giới hạn còn lại. |
-
-Không dùng câu trả lời do AI soạn hoặc kết quả mock để khẳng định model/API thật đã hoạt động đúng. Các điểm eval trong báo cáo nhóm cần dẫn đúng run tương ứng và do người phụ trách xác nhận.
+- **Code UI và dependency:** [starter_v0/app.py](../../starter_v0/app.py), [starter_v0/requirements.txt](../../starter_v0/requirements.txt).
+- **Transcript CLI 3 lượt:** [v5-evalfix_openrouter_20261110T144638732811.transcript.json](../../starter_v0/transcripts/v5-evalfix_openrouter_20261110T144638732811.transcript.json).
+- **Transcript UI 2 lượt:** [ui_v6-date-context_48233e87253141f3b1511624408b2be5.transcript.json](../../starter_v0/transcripts/ui_v6-date-context_48233e87253141f3b1511624408b2be5.transcript.json).
+- **Commit trên branch cuong:** [343abac](https://github.com/GaGionCay/K5-L3A-DAY03-HoangNgocMinhTri-2A202603379-ResearchAgentToolEval/commit/343abace8f838b0768a73c84aff75cb06c10dcd8) đưa UI, dependency và 8 transcript lên nhánh; [a619b44](https://github.com/GaGionCay/K5-L3A-DAY03-HoangNgocMinhTri-2A202603379-ResearchAgentToolEval/commit/a619b44ae5ef08c1ece65d0ef1c4156053ebc067) cập nhật riêng app.py để tương thích starter và bản v6.
+- **AI/công cụ đã dùng:** ChatGPT/Codex hỗ trợ viết và chỉnh UI, đọc lỗi, soạn nội dung demo và báo cáo; Streamlit chạy giao diện, AppTest kiểm tra luồng UI offline.
+- **Cách kiểm tra kết quả:** xem lại diff, file trong commit, tool call, tham số và câu trả lời trong transcript. Phân biệt kết quả mô phỏng với API thật; không coi trạng thái answered là bằng chứng agent đã hiểu đúng yêu cầu.
 
 ## 5. Tự đánh giá
 
-Tôi đã có phần UI và bằng chứng hội thoại để nhóm dùng khi chuẩn bị demo. Hai commit trên branch cuong giúp tách phần giao diện khỏi prompt, code tool và test do các thành viên khác phụ trách. Tôi cũng nhận ra cần kiểm tra nội dung thực tế: agent có thể lấy được dữ liệu nhưng vẫn hiểu sai yêu cầu, như việc lấy chủ đề robotics làm tên tài khoản X.
-
-Việc thử ngày giờ cho thấy trả lời đúng ngày và trả về dữ liệu mới là hai yêu cầu khác nhau. Dòng UTC+7 trên giao diện giúp xác định ngày hiện tại, nhưng giá trong nguồn vẫn cần kiểm tra thời điểm áp dụng và đơn vị. Đây là điểm tôi cần chú ý khi trình bày demo để không giới thiệu quá khả năng đã kiểm chứng.
-
-Phần còn cần hoàn thành là xác nhận link chạy đúng bản nhóm chốt, thử lại ít nhất ba lượt live trên bản đó và nhận đủ kết quả từ Ánh, Trí, Bảo, Nam để hoàn thiện báo cáo chung. Tôi chưa coi kiểm tra offline hoặc transcript cũ là bằng chứng nghiệm thu mới cho bản tích hợp cuối.
+- Qua phần việc này, mình hiểu rõ hơn cách đưa agent từ dòng lệnh lên giao diện để người khác dùng thử và cách lưu bằng chứng cho từng phiên hội thoại.
+- Mình nhận ra ngoài việc kiểm tra giao diện, còn cần đối chiếu yêu cầu của người dùng với tool call, tham số và câu trả lời để đánh giá kết quả demo.
+- Việc thử ngày giờ giúp mình phân biệt ngày hiện tại với thời điểm của dữ liệu trong nguồn. Hiển thị đúng UTC+7 chưa đủ để khẳng định giá trả về là giá mới nhất.
+- Phần còn cần hoàn thành là xác nhận link chạy đúng bản tích hợp cuối, thử lại ít nhất 3 lượt live trên bản đó và nhận đủ kết quả nhóm để chốt báo cáo.
