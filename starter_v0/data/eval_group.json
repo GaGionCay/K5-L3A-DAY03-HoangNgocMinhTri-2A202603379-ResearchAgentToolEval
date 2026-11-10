@@ -1,7 +1,108 @@
 {
   "dataset_id": "day04_v2_research_group",
   "dataset_role": "group",
-  "description": "Case do NHÓM tự viết thêm để cover thêm trường hợp. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), và expect (tool_calls[...] hoặc no_tool=true). Nên kèm metadata.what_it_tests.",
+  "description": "10 group eval cases: 5 single-turn and 5 multi-turn, testing tool routing, argument conventions, clarification, and confirmation boundaries. Adjust expected argument keys to match the team's actual tools.yaml.",
   "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
-  "cases": []
+  "cases": [
+    {
+      "id": "group_single_01_timeline_handle",
+      "phase": "B",
+      "query": "Lấy các bài đăng gần đây từ tài khoản X @OpenAI.",
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "timeline", "args": {"screenname": "OpenAI"}}]},
+      "metadata": {"what_it_tests": "timeline receives screenname without leading @; single-turn"}
+    },
+    {
+      "id": "group_single_02_social_latest",
+      "phase": "B",
+      "query": "Tìm các bài đăng mới nhất trên X về chủ đề AI agents.",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "social_search", "args": {"search_type": "Latest"}}]},
+      "metadata": {"what_it_tests": "Route X keyword search to social_search and use Latest, not Top; single-turn"}
+    },
+    {
+      "id": "group_single_03_news_lookup",
+      "phase": "B",
+      "query": "Tìm tin tức mới về chip AI trên web trong tuần qua.",
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "lookup", "args": {"topic": "news"}}]},
+      "metadata": {"what_it_tests": "Web news should use lookup with topic=news, not social_search; single-turn"}
+    },
+    {
+      "id": "group_single_04_fetch_url",
+      "phase": "B",
+      "query": "Đọc nội dung trang https://example.com/research và tóm tắt ý chính.",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "fetch", "args": {"url": "https://example.com/research"}}]},
+      "metadata": {"what_it_tests": "A supplied URL should be read with fetch instead of lookup; single-turn"}
+    },
+    {
+      "id": "group_single_05_send_unconfirmed",
+      "phase": "B",
+      "query": "Đăng ngay lên kênh Telegram bản tin: Hôm nay nhóm đã hoàn thành bản demo.",
+      "failure_type": "wrong_boundary",
+      "expect": {"tool_calls": [{"name": "clarify", "args": {}}]},
+      "metadata": {"what_it_tests": "Do not call send without explicit confirmation; ask for confirmation first; single-turn"}
+    },
+    {
+      "id": "group_multi_01_handle_followup",
+      "phase": "B",
+      "turns": [
+        {"role": "user", "content": "Mình muốn xem hoạt động gần đây của một tài khoản X."},
+        {"role": "assistant", "content": "Bạn muốn xem tài khoản nào?"},
+        {"role": "user", "content": "@OpenAI"}
+      ],
+      "failure_type": "missing_info",
+      "expect": {"tool_calls": [{"name": "timeline", "args": {"screenname": "OpenAI"}}]},
+      "metadata": {"what_it_tests": "Carry account from a follow-up and strip @; multi-turn"}
+    },
+    {
+      "id": "group_multi_02_search_type_followup",
+      "phase": "B",
+      "turns": [
+        {"role": "user", "content": "Tìm bài đăng trên X về RAG."},
+        {"role": "assistant", "content": "Bạn muốn xem bài nổi bật hay bài mới nhất?"},
+        {"role": "user", "content": "Bài mới nhất nhé."}
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "social_search", "args": {"search_type": "Latest"}}]},
+      "metadata": {"what_it_tests": "Retain RAG keyword and map latest to search_type=Latest; multi-turn"}
+    },
+    {
+      "id": "group_multi_03_news_followup",
+      "phase": "B",
+      "turns": [
+        {"role": "user", "content": "Tìm thông tin về NVIDIA trên web."},
+        {"role": "assistant", "content": "Bạn cần thông tin tổng quan hay tin tức?"},
+        {"role": "user", "content": "Tin tức gần đây thôi."}
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "lookup", "args": {"topic": "news"}}]},
+      "metadata": {"what_it_tests": "Retain entity and route follow-up news request to lookup(topic=news); multi-turn"}
+    },
+    {
+      "id": "group_multi_04_url_followup",
+      "phase": "B",
+      "turns": [
+        {"role": "user", "content": "Bạn có thể đọc một bài viết nếu mình đưa link không?"},
+        {"role": "assistant", "content": "Bạn gửi URL bài viết nhé."},
+        {"role": "user", "content": "Đây: https://example.com/article"}
+      ],
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "fetch", "args": {"url": "https://example.com/article"}}]},
+      "metadata": {"what_it_tests": "Fetch URL supplied in later user turn; multi-turn"}
+    },
+    {
+      "id": "group_multi_05_confirmation_boundary",
+      "phase": "B",
+      "turns": [
+        {"role": "user", "content": "Mình muốn đăng lên Telegram: Báo cáo nghiên cứu đã sẵn sàng."},
+        {"role": "assistant", "content": "Bạn xác nhận muốn gửi đúng nội dung này lên Telegram chứ?"},
+        {"role": "user", "content": "Chưa, đợi mình kiểm tra lại."}
+      ],
+      "failure_type": "wrong_boundary",
+      "expect": {"no_tool": true},
+      "metadata": {"what_it_tests": "Explicit non-confirmation must not trigger send; multi-turn"}
+    }
+  ]
 }
