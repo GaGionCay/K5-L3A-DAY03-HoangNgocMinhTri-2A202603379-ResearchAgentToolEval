@@ -22,7 +22,7 @@
 
 Bạn có thể nhờ agent tìm tin trên web, theo dõi bài đăng trên X/Twitter, đọc một đường link và gom kết quả thành bản tin kèm nguồn. Agent còn có công cụ tìm paper trên arXiv, tra cứu chính sách nội bộ, lọc kết quả trùng URL và gửi bản tin qua Telegram sau khi được xác nhận.
 
-**Mở demo:** [Research Agent](https://cooking-questions-fastest-diffs.trycloudflare.com)
+**Mở demo:** [Research Agent](https://monitor-chemistry-feb-spiritual.trycloudflare.com)
 
 Nhập yêu cầu vào ô chat; nếu agent cần bổ sung tài khoản hoặc URL, trả lời ngay ở lượt tiếp theo. Chọn **Cuộc trò chuyện mới** khi muốn bắt đầu chủ đề khác.
 
