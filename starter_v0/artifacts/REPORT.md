@@ -238,7 +238,7 @@ Nhóm chưa chạy Ollama trong phần bằng chứng hiện có nên chưa có 
 
 ## B8. Phân công công việc tiếp theo
 
-Bảng dưới đây là phương án phân công dự kiến dựa trên những việc còn lại trong báo cáo. Nhóm sẽ bàn lại trước khi chốt người phụ trách; bảng này không dùng để xác định ai đã làm các phần trước đó.
+Bảng dưới đây là phương án phân công dự kiến dựa trên những việc còn lại trong báo cáo. Nhóm sẽ bàn lại trước khi chốt người phụ trách; bảng này không dùng để xác định ai đã làm các phần trước đó. Chi tiết kế hoạch phân công, tiêu chí nghiệm thu và kịch bản chia sẻ thuyết trình được lưu tại [TASK_ALLOCATION.md](TASK_ALLOCATION.md) và đối chiếu với [TEAM.md](../../TEAM.md).
 
 | Thành viên | Phụ trách chính | Đầu ra |
 |---|---|---|
