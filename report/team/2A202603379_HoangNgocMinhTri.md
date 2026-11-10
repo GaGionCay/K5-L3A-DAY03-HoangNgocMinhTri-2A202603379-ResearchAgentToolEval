@@ -109,3 +109,4 @@ Các nhiệm vụ trọng tâm được giao bao gồm:
 ### 5.3. Mức độ hoàn thành & Tự chấm điểm
 - **Mức độ hoàn thành:** 100% khối lượng công việc được phân công theo phân vai nhóm.
 - **Tự chấm điểm:** 10/10.
+
