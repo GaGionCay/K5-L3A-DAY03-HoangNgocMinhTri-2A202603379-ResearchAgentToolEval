@@ -5,8 +5,25 @@ from uuid import uuid4
 
 import streamlit as st
 
+import chat as chat_runtime
 from chat import now_iso, run_model_tool_loop, write_transcript
 from providers import make_provider
+try:
+    from time_context import current_time_context
+except ModuleNotFoundError as exc:
+    if exc.name != "time_context":
+        raise
+
+    def current_time_context():
+        local = datetime.now(timezone.utc).astimezone(timezone(timedelta(hours=7)))
+        return {
+            "current_datetime": local.isoformat(timespec="seconds"),
+            "current_date": local.date().isoformat(),
+            "display_date": local.strftime("%d/%m/%Y"),
+            "timezone": "Asia/Ho_Chi_Minh",
+            "utc_offset": "+07:00",
+        }
+
 from tools import load_tool_declarations, to_openai_tools
 from versioning import artifact_version_dict, build_artifact_version
 
@@ -14,18 +31,8 @@ from versioning import artifact_version_dict, build_artifact_version
 ROOT = Path(__file__).resolve().parent
 PROMPT_PATH = ROOT / "artifacts" / "system_prompt.md"
 TOOLS_PATH = ROOT / "artifacts" / "tools.yaml"
-APP_VERSION = "cuong-demo"
-
-
-def current_time_context():
-    local = datetime.now(timezone.utc).astimezone(timezone(timedelta(hours=7)))
-    return {
-        "current_datetime": local.isoformat(timespec="seconds"),
-        "current_date": local.date().isoformat(),
-        "display_date": local.strftime("%d/%m/%Y"),
-        "timezone": "Asia/Ho_Chi_Minh",
-        "utc_offset": "+07:00",
-    }
+APP_VERSION = "v6-date-context"
+CHAT_HAS_TIME_CONTEXT = callable(getattr(chat_runtime, "time_context_message", None))
 
 st.set_page_config(
     page_title="Research Agent",
@@ -47,6 +54,7 @@ def new_session():
             **artifact_version_dict(version),
             "provider": "openrouter",
             "interface": "streamlit",
+            "date_context_source": "shared-chat" if CHAT_HAS_TIME_CONTEXT else "ui-fallback",
             "created_at": now_iso(),
             "turns": [],
         },
@@ -87,25 +95,30 @@ if query:
 
     runtime_context = current_time_context()
     turn["runtime_context"] = runtime_context
+    messages = [
+        {"role": "system", "content": session["prompt"]},
+        *session["history"][-12:],
+        {"role": "user", "content": query},
+    ]
+    # The integrated chat loop injects its own clock. Supply one only for starter.
+    if not CHAT_HAS_TIME_CONTEXT:
+        messages.insert(1, {
+            "role": "system",
+            "content": (
+                "Current local date from the application clock: "
+                + runtime_context["current_date"]
+                + ". Current local time: " + runtime_context["current_datetime"]
+                + ". User timezone: Asia/Ho_Chi_Minh (UTC+07:00). "
+                + "Resolve today and hôm nay against this clock."
+            ),
+        })
 
     try:
         with st.spinner("Đang tìm và tổng hợp thông tin..."):
             provider = make_provider("openrouter")
             result = run_model_tool_loop(
                 provider=provider,
-                messages=[
-                    {"role": "system", "content": session["prompt"]},
-                    {
-                        "role": "system",
-                        "content": (
-                            "Application clock: " + runtime_context["current_datetime"]
-                            + ". User timezone: Asia/Ho_Chi_Minh (UTC+7). "
-                            + "Resolve today's date using this clock."
-                        ),
-                    },
-                    *session["history"][-12:],
-                    {"role": "user", "content": query},
-                ],
+                messages=messages,
                 tools=session["tools"],
                 model=None,
                 max_tool_rounds=4,
