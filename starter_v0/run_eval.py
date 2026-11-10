@@ -100,8 +100,17 @@ def case_messages(case: dict[str, Any]) -> list[dict[str, str]]:
 def normalize_value(value: Any) -> Any:
     if isinstance(value, str):
         return value.strip().lower()
+    if isinstance(value, dict):
+        return {key: normalize_value(item) for key, item in value.items()}
     if isinstance(value, list):
-        return sorted(normalize_value(item) for item in value)
+        normalized = [normalize_value(item) for item in value]
+        # Structured arrays carry positional meaning, e.g. the original order
+        # of items sent to deduplicate. Python dicts cannot be sorted directly.
+        if any(isinstance(item, (dict, list)) for item in normalized):
+            return normalized
+        # Preserve the historical order-insensitive comparison of scalar lists
+        # while supporting mixed JSON scalar types without Python TypeError.
+        return sorted(normalized, key=lambda item: json.dumps(item, ensure_ascii=False, sort_keys=True))
     return value
 
 

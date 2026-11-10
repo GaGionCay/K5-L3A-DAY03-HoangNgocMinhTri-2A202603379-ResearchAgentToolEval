@@ -6,6 +6,7 @@ from typing import Any
 import requests
 
 from tools._shared import TIMEOUT, err
+from tools._validation import choice, handle, integer, object_list, text
 
 
 def _twitter_get(path: str, params: dict[str, Any]) -> dict[str, Any]:
@@ -28,6 +29,7 @@ def _tweet_item(raw: dict[str, Any]) -> dict[str, Any]:
     tweet_id = raw.get("tweet_id") or raw.get("id") or ""
     text = (raw.get("text") or "").strip()
     return {
+        "_tweet_id": str(tweet_id),
         "title": text.split("\n")[0][:120],
         "summary": text,
         "url": f"https://x.com/{handle}/status/{tweet_id}" if handle and tweet_id else "",
@@ -39,14 +41,23 @@ def _tweet_item(raw: dict[str, Any]) -> dict[str, Any]:
 
 def _tweets_from(data: dict[str, Any], limit: int) -> list[dict[str, Any]]:
     raw_items = data.get("timeline") or data.get("tweets") or []
-    items = [_tweet_item(item) for item in raw_items if item.get("tweet_id") or item.get("id")]
-    return items[: int(limit or 5)]
+    items = [_tweet_item(item) for item in object_list(raw_items, "tweets") if item.get("tweet_id") or item.get("id")]
+    return items[:limit]
 
 
 def get_user_tweets(screenname: str = "", limit: int = 5) -> dict[str, Any]:
     try:
+        screenname = handle(screenname)
+        limit = integer(limit, "limit", maximum=100)
         data = _twitter_get("/timeline.php", {"screenname": screenname})
-        return {"tool": "get_user_tweets", "screenname": screenname, "items": _tweets_from(data, limit)}
+        items = _tweets_from(data, limit)
+        for item in items:
+            tweet_id = item.pop("_tweet_id")
+            if not item["url"]:
+                # Timeline responses can omit the already-known account handle.
+                item["url"] = f"https://x.com/{screenname}/status/{tweet_id}"
+                item["source"] = f"@{screenname}"
+        return {"tool": "get_user_tweets", "screenname": screenname, "items": items}
     except Exception as exc:
         return err("get_user_tweets", exc)
 

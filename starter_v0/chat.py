@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
+import unicodedata
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -10,7 +12,9 @@ from typing import Any
 from env_loader import load_lab_env
 from providers import make_provider
 from providers.base import ToolCall
+from time_context import current_time_context, time_context_message
 from tools import TOOL_FUNCTIONS, load_tool_declarations, to_openai_tools
+from tools.send.tool import _approve_send_after_user_confirmation
 from versioning import artifact_version_dict, build_artifact_version
 
 
@@ -50,10 +54,87 @@ def execute_tool_call(call: ToolCall) -> dict[str, Any]:
             "result": {"error": "unknown_tool", "message": f"No local implementation for {call.name}"},
         }
     try:
-        result = func(**call.args)
+        if call.name == "send":
+            # Never forward model-supplied approval objects to the action tool.
+            safe_args = {key: call.args[key] for key in ("text", "confirmed", "destination") if key in call.args}
+            result = func(**safe_args)
+        else:
+            result = func(**call.args)
     except Exception as exc:
         result = {"error": type(exc).__name__, "message": str(exc)}
     return {"tool": call.name, "args": call.args, "result": result}
+
+
+def send_confirmation_prompt(draft: str, destination: str) -> str:
+    return (
+        "Review the exact Telegram message and destination below. "
+        "Reply yes to send exactly this message, or no to cancel.\n\n"
+        f"Destination: {destination}\n\n"
+        f"Draft:\n{draft}"
+    )
+
+
+def _confirmation_decision(user_text: str) -> bool | None:
+    normalized = unicodedata.normalize("NFD", user_text.strip().lower())
+    normalized = "".join(char for char in normalized if unicodedata.category(char) != "Mn")
+    normalized = re.sub(r"[^\w\s]", "", normalized)
+    normalized = " ".join(normalized.split())
+
+    affirmative = {
+        "yes", "yes send", "send", "send it", "confirm", "confirmed",
+        "i confirm", "ok", "okay", "dong y", "xac nhan", "gui di",
+    }
+    negative = {
+        "no", "no send", "dont send", "do not send", "cancel",
+        "khong", "khong gui", "huy", "tu choi",
+    }
+    if normalized in affirmative:
+        return True
+    if normalized in negative:
+        return False
+    return None
+
+
+def resolve_pending_send(user_text: str, pending_send: dict[str, str]) -> dict[str, Any]:
+    decision = _confirmation_decision(user_text)
+    if decision is None:
+        return {
+            "status": "waiting_for_user",
+            "assistant_text": "Please reply yes to send the displayed draft to the displayed destination, or no to cancel.",
+            "tool_events": [],
+        }
+    if not decision:
+        return {
+            "status": "send_cancelled",
+            "assistant_text": "Cancelled. Nothing was sent.",
+            "tool_events": [],
+        }
+
+    draft = pending_send["text"]
+    destination = pending_send["destination"]
+    approval = _approve_send_after_user_confirmation(draft, destination)
+    result = TOOL_FUNCTIONS["send"](
+        text=draft,
+        confirmed=True,
+        destination=destination,
+        approval=approval,
+    )
+    event = {
+        "tool": "send",
+        "args": {"text": draft, "destination": destination, "confirmed": True},
+        "result": result,
+    }
+    if result.get("status") == "sent":
+        return {
+            "status": "send_sent",
+            "assistant_text": f"Sent the approved message to {destination}.",
+            "tool_events": [event],
+        }
+    return {
+        "status": "send_error",
+        "assistant_text": f"The message was not sent: {result.get('message', result.get('error', 'unknown error'))}",
+        "tool_events": [event],
+    }
 
 
 def tool_results_message(events: list[dict[str, Any]]) -> dict[str, str]:
@@ -85,7 +166,11 @@ def run_model_tool_loop(
     model: str | None,
     max_tool_rounds: int,
 ) -> dict[str, Any]:
+    context = current_time_context()
     working_messages = list(messages)
+    # Refresh per user turn, including sessions that remain open past midnight.
+    position = 1 if working_messages and working_messages[0]["role"] == "system" else 0
+    working_messages.insert(position, time_context_message(context))
     rounds: list[dict[str, Any]] = []
     all_tool_events: list[dict[str, Any]] = []
 
@@ -103,6 +188,7 @@ def run_model_tool_loop(
             rounds.append(round_record)
             return {
                 "status": "answered",
+                "runtime_context": context,
                 "assistant_text": response.text or "",
                 "rounds": rounds,
                 "tool_events": all_tool_events,
@@ -113,18 +199,132 @@ def run_model_tool_loop(
 
         for call in calls:
             print(f"🔧 {call.name}({json.dumps(call.args, ensure_ascii=False, sort_keys=True)})")
+            if call.name == "clarify" and call.args.get("response_type") == "yes_no" and "draft" in call.args:
+                draft = call.args.get("draft")
+                destination = call.args.get("destination") or os.getenv("TELEGRAM_CHAT_ID")
+                if not isinstance(draft, str) or not draft.strip():
+                    question = "What exact message would you like to send?"
+                    response_type = "text"
+                elif not destination:
+                    question = (
+                        f"Draft:\n{draft}\n\n"
+                        "Which Telegram chat ID or channel should receive it?"
+                    )
+                    response_type = "text"
+                else:
+                    draft = draft.strip()
+                    destination = str(destination).strip()
+                    question = send_confirmation_prompt(draft, destination)
+                    response_type = "yes_no"
+
+                clarification_args: dict[str, Any] = {
+                    "question": question,
+                    "response_type": response_type,
+                }
+                if response_type == "yes_no":
+                    clarification_args.update({
+                        "options": ["yes", "no"],
+                        "draft": draft,
+                        "destination": destination,
+                    })
+                elif isinstance(draft, str) and draft.strip():
+                    clarification_args["draft"] = draft.strip()
+
+                clarification = TOOL_FUNCTIONS["clarify"](**clarification_args)
+                event = {
+                    "tool": "clarify",
+                    "args": clarification_args,
+                    "result": clarification,
+                }
+                round_record["tool_results"].append(event)
+                all_tool_events.append(event)
+                rounds.append(round_record)
+                result: dict[str, Any] = {
+                    "status": "waiting_for_user",
+                    "runtime_context": context,
+                    "assistant_text": question,
+                    "rounds": rounds,
+                    "tool_events": all_tool_events,
+                }
+                if response_type == "yes_no":
+                    result["pending_send"] = {
+                        "text": draft,
+                        "destination": destination,
+                    }
+                return result
+
             event = execute_tool_call(call)
             round_record["tool_results"].append(event)
             all_tool_events.append(event)
 
+            result = event.get("result", {})
+            if isinstance(result, dict) and result.get("status") == "needs_confirmation":
+                draft = result["draft"]
+                destination = result["destination"]
+                question = send_confirmation_prompt(draft, destination)
+                clarification = TOOL_FUNCTIONS["clarify"](
+                    question=question,
+                    response_type="yes_no",
+                    options=["yes", "no"],
+                    draft=draft,
+                    destination=destination,
+                )
+                clarify_event = {
+                    "tool": "clarify",
+                    "args": {
+                        "question": question,
+                        "response_type": "yes_no",
+                        "options": ["yes", "no"],
+                        "draft": draft,
+                        "destination": destination,
+                    },
+                    "result": clarification,
+                }
+                round_record["tool_results"].append(clarify_event)
+                all_tool_events.append(clarify_event)
+                rounds.append(round_record)
+                return {
+                    "status": "waiting_for_user",
+                    "runtime_context": context,
+                    "assistant_text": question,
+                    "pending_send": {"text": draft, "destination": destination},
+                    "rounds": rounds,
+                    "tool_events": all_tool_events,
+                }
+
+            if isinstance(result, dict) and result.get("status") == "needs_destination":
+                question = (
+                    f"Draft: {result.get('draft', '')}\n\n"
+                    "Which Telegram chat ID or channel should receive this message?"
+                )
+                clarification = TOOL_FUNCTIONS["clarify"](
+                    question=question,
+                    response_type="text",
+                )
+                clarify_event = {
+                    "tool": "clarify",
+                    "args": {"question": question, "response_type": "text"},
+                    "result": clarification,
+                }
+                round_record["tool_results"].append(clarify_event)
+                all_tool_events.append(clarify_event)
+                rounds.append(round_record)
+                return {
+                    "status": "waiting_for_user",
+                    "runtime_context": context,
+                    "assistant_text": question,
+                    "rounds": rounds,
+                    "tool_events": all_tool_events,
+                }
+
             # Detect the clarification/pause tool by its output flag (rename-proof),
             # not by a hard-coded tool name.
-            result = event.get("result", {})
             if isinstance(result, dict) and result.get("awaiting_user"):
                 question = result.get("question") or call.args.get("question") or "Bạn bổ sung thêm thông tin nhé."
                 rounds.append(round_record)
                 return {
                     "status": "waiting_for_user",
+                    "runtime_context": context,
                     "assistant_text": question,
                     "rounds": rounds,
                     "tool_events": all_tool_events,
@@ -137,6 +337,7 @@ def run_model_tool_loop(
 
     return {
         "status": "max_tool_rounds",
+        "runtime_context": context,
         "assistant_text": f"Stopped after {max_tool_rounds} tool rounds. Inspect the transcript for details.",
         "rounds": rounds,
         "tool_events": all_tool_events,
@@ -193,6 +394,7 @@ def main() -> None:
     print("Type /exit to stop.")
 
     history: list[dict[str, str]] = []
+    pending_send: dict[str, str] | None = None
     turn_index = 0
     while True:
         try:
@@ -224,13 +426,19 @@ def main() -> None:
         }
 
         try:
-            result = run_model_tool_loop(
-                provider=provider,
-                messages=messages,
-                tools=openai_tools,
-                model=args.model,
-                max_tool_rounds=args.max_tool_rounds,
-            )
+            if pending_send is not None:
+                result = resolve_pending_send(user_text, pending_send)
+                if result["status"] != "waiting_for_user":
+                    pending_send = None
+            else:
+                result = run_model_tool_loop(
+                    provider=provider,
+                    messages=messages,
+                    tools=openai_tools,
+                    model=args.model,
+                    max_tool_rounds=args.max_tool_rounds,
+                )
+                pending_send = result.get("pending_send")
             turn_record.update(result)
             assistant_text = result["assistant_text"]
             print(f"\nAgent> {assistant_text}")

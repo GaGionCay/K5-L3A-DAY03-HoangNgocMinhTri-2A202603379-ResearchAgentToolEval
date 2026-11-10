@@ -3,11 +3,45 @@ name: clarify
 track: core
 kind: control
 requires_env: []
-inputs: [question, response_type, options]
-outputs: [question, response_type, options, awaiting_user]
+inputs:
+- question
+- response_type
+- options
+- draft
+- destination
+outputs:
+- question
+- response_type
+- options
+- awaiting_user
+- draft
+- destination
 side_effect: false
 ---
+
 # clarify
 
-Returns a question to the user and pauses until the next user turn.
-`response_type` is free text, yes/no, or a choice from `options`.
+Hỏi người dùng và chờ lượt tiếp theo khi thiếu thông tin thiết yếu hoặc cần xác nhận. Dùng response_type=text để hỏi tài khoản/URL; yes_no để xác nhận gửi; choice cho lựa chọn. Không dùng khi thông tin đã có trong hội thoại. Không tìm kiếm hoặc gửi nội dung.
+
+## Khi dùng
+
+Thiếu tài khoản/URL hoặc cần xác nhận trước hành động.
+
+## Khi không dùng
+
+Thông tin đã rõ hoặc đã được cung cấp ở lượt trước.
+
+## Arguments và kết quả
+
+question phải là câu hỏi không rỗng. response_type là text, yes_no hoặc choice. choice cần ít nhất hai options không rỗng. Kết quả awaiting_user=true để dừng vòng gọi tool.
+Khi xác nhận gửi, truyền draft và destination chính xác; runtime sẽ hiển thị cả hai trước khi chấp nhận câu trả lời yes/no.
+
+## Ví dụ
+
+```python
+clarify(question='Bạn muốn xem tài khoản nào?', response_type='text')
+```
+
+## Lỗi
+
+Input sai hoặc lỗi dịch vụ trả về `error` và `message` thay vì làm dừng agent. Test HTTP dùng mock; kết quả unit test không chứng minh API thật đã hoạt động.

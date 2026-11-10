@@ -1,5 +1,5 @@
 {
-  "dataset_id": "day04_v2_research_group",
+  "dataset_id": "day03_research_group",
   "dataset_role": "group",
   "description": "10 group eval cases: 5 single-turn and 5 multi-turn, testing tool routing, argument conventions, clarification, and confirmation boundaries. Adjust expected argument keys to match the team's actual tools.yaml.",
   "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],

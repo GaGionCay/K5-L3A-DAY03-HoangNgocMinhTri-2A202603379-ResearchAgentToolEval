@@ -1,0 +1,39 @@
+﻿.FFF..FF                                                                 [100%]
+================================== FAILURES ===================================
+__________ test_send_requires_literal_true_before_any_network[false] __________
+tests\test_tool_validation.py:96: in test_send_requires_literal_true_before_any_network
+    assert T["send"]("Message", confirmed=confirmed)["status"] == "needs_confirmation"
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'status'
+__________ test_send_requires_literal_true_before_any_network[true] ___________
+tests\test_tool_validation.py:96: in test_send_requires_literal_true_before_any_network
+    assert T["send"]("Message", confirmed=confirmed)["status"] == "needs_confirmation"
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'status'
+____________ test_send_requires_literal_true_before_any_network[1] ____________
+tests\test_tool_validation.py:96: in test_send_requires_literal_true_before_any_network
+    assert T["send"]("Message", confirmed=confirmed)["status"] == "needs_confirmation"
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'status'
+______ test_timeline_normalizes_handle_and_fills_url_from_known_account _______
+tests\test_tool_validation.py:129: in test_timeline_normalizes_handle_and_fills_url_from_known_account
+    assert calls[0]["params"] == {"screenname": "nasa"}
+E   AssertionError: assert {'screenname': ' @nasa '} == {'screenname': 'nasa'}
+E     
+E     Differing items:
+E     {'screenname': ' @nasa '} != {'screenname': 'nasa'}
+E     Use -v to get more diff
+______________ test_paper_text_honors_page_and_character_limits _______________
+tests\test_tool_validation.py:242: in test_paper_text_honors_page_and_character_limits
+    assert result["items"][0]["summary"] == "abcd"
+E   AssertionError: assert 'abcdefghij' == 'abcd'
+E     
+E     - abcd
+E     + abcdefghij
+=========================== short test summary info ===========================
+FAILED tests/test_tool_validation.py::test_send_requires_literal_true_before_any_network[false]
+FAILED tests/test_tool_validation.py::test_send_requires_literal_true_before_any_network[true]
+FAILED tests/test_tool_validation.py::test_send_requires_literal_true_before_any_network[1]
+FAILED tests/test_tool_validation.py::test_timeline_normalizes_handle_and_fills_url_from_known_account
+FAILED tests/test_tool_validation.py::test_paper_text_honors_page_and_character_limits
+5 failed, 3 passed, 63 deselected in 0.32s
