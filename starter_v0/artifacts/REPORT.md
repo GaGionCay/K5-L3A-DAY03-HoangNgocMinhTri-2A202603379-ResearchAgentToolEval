@@ -1,13 +1,11 @@
-# Day 03 Lab v2 Report — Research Agent
+# Báo cáo Day 03 — Research Agent
 
-> File này gồm 2 phần, deadline khác nhau:
-> - **PHẦN A — Giới thiệu agent**: ngắn gọn 1 trang để team khác hiểu nhanh agent có tool gì, làm được gì, thử bằng câu hỏi nào. **Xong trước 16:30** để làm tài liệu phụ trợ khi demo. Có thể làm thành poster HTML/SVG (`artifacts/poster.html` / `poster.svg`) để show cho team cùng zone.
-> - **PHẦN B — Chi tiết / Bằng chứng**: bảng đầy đủ (v0–v3, failure, eval, chat) dựa trên log thật. **Có thể hoàn thiện sau buổi debate để nộp bài.**
+Báo cáo gồm hai phần: Phần A giới thiệu agent và cách dùng thử; Phần B ghi lại quá trình cải thiện, kết quả kiểm thử và những vấn đề còn cần xử lý. Các nhận xét trong báo cáo đều dựa trên run JSON, transcript hoặc kiểm tra code được lưu trong repo.
 
-## Team
+## Thông tin nhóm
 
 - Team: HoangNgocMinhTri - 2A202603379
-- Members: Cường, Trí, Ánh, Bảo, Nam (họ tên đầy đủ và mã sinh viên sẽ bổ sung)
+- Thành viên: Cường, Trí, Ánh, Bảo, Nam (sẽ bổ sung họ tên đầy đủ và mã sinh viên)
 - Provider/model: OpenRouter / openai/gpt-4o-mini
 
 ---
@@ -20,13 +18,13 @@
 
 ## A1. Agent này làm được gì
 
-Bạn có thể nhờ agent tìm tin trên web, theo dõi bài đăng trên X/Twitter, đọc một đường link và gom kết quả thành bản tin kèm nguồn. Agent còn có công cụ tìm paper trên arXiv, tra cứu chính sách nội bộ, lọc kết quả trùng URL và gửi bản tin qua Telegram sau khi được xác nhận.
+Research Agent giúp bạn tìm tin trên web, theo dõi bài đăng trên X/Twitter, đọc bài từ một đường link và tổng hợp kết quả thành bản tin có nguồn. Agent cũng hỗ trợ tìm bài nghiên cứu trên arXiv, tra cứu chính sách nội bộ, lọc URL trùng và gửi bản tin qua Telegram khi đã được xác nhận.
 
 **Mở demo:** [Research Agent](https://k5-l3a-day03-hoangngocminhtri-2a202603379-researchagenttooleva.streamlit.app)
 
-Nhập yêu cầu vào ô chat; nếu agent cần bổ sung tài khoản hoặc URL, trả lời ngay ở lượt tiếp theo. Chọn **Cuộc trò chuyện mới** khi muốn bắt đầu chủ đề khác.
+Để dùng thử, nhập yêu cầu vào ô chat. Nếu agent hỏi thêm tài khoản hoặc URL, bạn trả lời ở lượt tiếp theo; khi muốn đổi chủ đề, chọn **Cuộc trò chuyện mới**.
 
-Demo được triển khai trên Streamlit Community Cloud, không phụ thuộc việc máy cá nhân còn bật hay không. App có thể cần thời gian khởi động lại sau khi ngủ; các tool live vẫn cần API key và hạn mức hợp lệ.
+Bản demo chạy trên Streamlit Community Cloud nên bạn vẫn có thể truy cập khi máy cá nhân của nhóm đã tắt. Sau một thời gian không sử dụng, app có thể cần chờ khởi động lại. Các công cụ gọi dịch vụ bên ngoài vẫn phụ thuộc vào API key và hạn mức.
 
 ## A2. Tool agent có
 
@@ -44,9 +42,9 @@ Demo được triển khai trên Streamlit Community Cloud, không phụ thuộc
 | `paper_text` | Tải PDF arXiv và trích văn bản theo số trang, số ký tự yêu cầu. | Có |
 | `deduplicate` | Loại bỏ kết quả trùng URL, giữ bản ghi đầu tiên và thứ tự ban đầu. | Có |
 
-Tool mới của nhóm là **`deduplicate`**. Khi tổng hợp nhiều danh sách kết quả, tool giúp loại các bản ghi lặp lại trước bước trình bày bản tin; tool chạy cục bộ và không cần API key.
+Nhóm bổ sung **`deduplicate`** để xử lý trường hợp nhiều danh sách tìm kiếm cùng chứa một URL. Tool giữ bản ghi đầu tiên, bỏ các URL lặp lại và giữ thứ tự ban đầu. Phần này chạy cục bộ, không cần API key.
 
-**Đã kiểm tra:** Bộ test offline đạt **210 PASS, 0 FAIL, 0 ERROR, 0 SKIP**, gồm contract, input hợp lệ/sai kiểu và các nhánh lỗi. Test HTTP dùng mock; khả năng gọi dịch vụ thật còn phụ thuộc API key, quyền truy cập và hạn mức. Telegram cần cấu hình bot/kênh và xác nhận của người dùng trước khi gửi.
+**Kết quả kiểm thử:** Bộ test offline đạt **210 PASS, 0 FAIL, 0 ERROR, 0 SKIP**. Các test kiểm tra khai báo tool có khớp code hay không, cách xử lý đầu vào và các tình huống lỗi. Lời gọi HTTP được mô phỏng bằng mock, vì vậy kết quả này chưa thay thế cho thử nghiệm với API thật. Riêng Telegram cần cấu hình bot/kênh và có xác nhận của người dùng trước khi gửi.
 
 ## A3. Câu hỏi mẫu để thử
 
@@ -70,9 +68,9 @@ Tool mới của nhóm là **`deduplicate`**. Khi tổng hợp nhiều danh sác
 
 # PHẦN B — Chi tiết / Bằng chứng
 
-## B1. Version Evidence
+## B1. Quá trình cải thiện qua từng phiên bản
 
-Số liệu dưới đây lấy từ run JSON và `version_log.csv`. Provider/model dùng cho các run: **OpenRouter / openai/gpt-4o-mini**.
+Nhóm dùng **OpenRouter / openai/gpt-4o-mini** cho các lần đánh giá dưới đây. Số liệu được đối chiếu với run JSON và `version_log.csv` để có thể xem lại từng thay đổi và kết quả.
 
 | Version | Suite | Thay đổi | Giả thuyết / mục đích | Trước | Sau | Bằng chứng |
 |---|---|---|---|---|---|---|
@@ -94,41 +92,41 @@ Số liệu dưới đây lấy từ run JSON và `version_log.csv`. Provider/mo
 | Base — v6-date-context | 18/20 | 100% | 90% | 100% | 0 |
 | Group — v6-date-context | 10/10 | 100% | 100% | 100% | 0 |
 
-Base và group là hai bộ dữ liệu khác nhau. Lần group đầu in accuracy 100% nhưng chỉ đo được 9 case; G01 bị ghi nhãn `provider_error` do lỗi bộ chấm cục bộ, không phải bằng chứng API bị lỗi. Sau khi sửa comparator, chạy lại mới có đủ 10/10 PASS. Không sửa nội dung case để làm tăng điểm.
+Cần đọc điểm cùng với số case thực sự đo được. Ở lần group đầu, màn hình hiện accuracy 100% nhưng chỉ có 9 case được chấm; G01 gặp lỗi trong bộ so sánh và bị ghi nhãn `provider_error`. Sau khi sửa bộ chấm, lần chạy lại mới đạt đủ 10/10 PASS. Nhóm giữ nguyên nội dung case trong quá trình này. Base và group là hai bộ dữ liệu riêng, nên không so trực tiếp hai mức điểm như cùng một bài kiểm tra.
 
-Các version v0–v3 giữ nguyên tool declaration; v5 thay đổi cả description, validation và thêm tool. Vì nhiều yếu tố đổi cùng lúc ở v5, kết quả 95% không xác định được riêng yếu tố nào đóng góp bao nhiêu. `artifact_version` lưu hash prompt/tools.yaml; khi tái lập cần đối chiếu cả code tool và bộ chấm trong repo.
+Từ v0 đến v3, nhóm giữ nguyên khai báo tool và tập trung chỉnh prompt. Đến v5, mô tả tool, kiểm tra đầu vào và tool mới được cập nhật cùng lúc. Điểm 95% cho thấy kết quả của cả đợt thay đổi, nhưng chưa cho biết riêng phần nào đóng góp bao nhiêu. Khi chạy lại, cần đối chiếu `artifact_version` của prompt/tools.yaml cùng code tool và bộ chấm trong repo.
 
-## B2. Failure Analysis
+## B2. Những lỗi đã gặp và cách xử lý
 
-Các FAIL của eval được giữ nguyên trong log; phần nhận xét dưới đây phân biệt lỗi model với lỗi bộ chấm.
+Bảng dưới đây ghi lại các case FAIL và điều thực sự xảy ra trong log. Một số case là lỗi chọn tool hoặc tham số của model; một số khác cần xem lại cách chấm. Nhóm giữ cả kết quả lỗi để giải thích quá trình sửa.
 
 | Version/suite | Case | Nhãn lỗi | Lỗi quan sát | Tool call thực tế | Phân tích / xử lý |
 |---|---|---|---|---|---|
-| v0/base | R08_out_of_scope | out_of_scope | unexpected_tool_call | `send({"text":"Nguyên hàm của x^2 là \\( \\frac{x^3}{3} + C \\), trong đó \\( C \\) là hằng số tùy ý."})` | Gọi tool cho câu ngoài phạm vi. Các run sau PASS; chưa có thí nghiệm riêng để tách tác động của quy tắc phạm vi. |
-| v0/base | R10_missing_handle | missing_info | missing_tool_call | `timeline({"screenname":"sama"})` | Suy diễn dữ liệu còn thiếu. v1 bổ sung hỏi lại; v2 thay nhầm đoạn và gây hồi quy; bản cuối PASS trên base nhưng còn lỗi cùng loại trong live chat. |
-| v0/base | R11_missing_url | missing_info | missing_tool_call | `fetch({"url":"https://example.com/article"})` | Suy diễn dữ liệu còn thiếu. v1 bổ sung hỏi lại; v2 thay nhầm đoạn và gây hồi quy; bản cuối PASS trên base nhưng còn lỗi cùng loại trong live chat. |
-| v0/base | R12_confirm_before_send | wrong_boundary | missing_tool_call | `send({"text":"Bản tin này đã được đăng lên Telegram."})` | Model chọn send trước khi xác nhận; cần hỏi clarify(yes_no). Không suy ra có tin nhắn gửi thật chỉ từ tool call. |
-| v0/base | R13_parallel_web_and_tweets | wrong_tool | wrong_arg_value | `lookup({"query":"AI news","timeframe":"day","max_results":5})`; `social_search({"query":"AI","search_type":"Latest","limit":5})` | Kiểm tra observed_mismatch: lỗi ở query/topic dù nhãn case là wrong_tool. Rule routing và convention news được làm rõ; bản cuối PASS. |
-| v0/base | R14_out_of_scope_coding | out_of_scope | unexpected_tool_call | `send({"text":"Dưới đây là một hàm Python tính số Fibonacci bằng đệ quy:\n\n```python\ndef fibonacci(n):\n    if n <= 0:\n        return 0\n    elif n == 1:\n     ...)` | Gọi tool cho câu ngoài phạm vi. Các run sau PASS; chưa có thí nghiệm riêng để tách tác động của quy tắc phạm vi. |
-| v1/base | R12_confirm_before_send | wrong_boundary | wrong_arg_value | `clarify({"question":"Bạn có thể cung cấp nội dung bản tin mà bạn muốn đăng lên Telegram không?","response_type":"text"})` | Agent hỏi nội dung bằng clarify(text), khác kỳ vọng yes_no. Cần đánh giá thủ công vì request chưa đưa nội dung bản tin; log không cho thấy gửi ngay. |
-| v1/base | M02_carryover_timeframe | wrong_arg_value | missing_tool_call | `social_search({"query":"robotics","search_type":"Latest","limit":5})` | Chọn social_search cho tin web. Cần giữ nguồn và thời gian từ ngữ cảnh; base bản cuối PASS. |
-| v2/base | R10_missing_handle | missing_info | missing_tool_call | `timeline({"screenname":"twitter","limit":5})` | Suy diễn dữ liệu còn thiếu. v1 bổ sung hỏi lại; v2 thay nhầm đoạn và gây hồi quy; bản cuối PASS trên base nhưng còn lỗi cùng loại trong live chat. |
-| v2/base | R11_missing_url | missing_info | missing_tool_call | `fetch({"url":"https://"})` | Suy diễn dữ liệu còn thiếu. v1 bổ sung hỏi lại; v2 thay nhầm đoạn và gây hồi quy; bản cuối PASS trên base nhưng còn lỗi cùng loại trong live chat. |
-| v2-fix/base | R12_confirm_before_send | wrong_boundary | wrong_arg_value | `clarify({"question":"Bạn có thể cung cấp nội dung cụ thể mà bạn muốn đăng lên Telegram không?","response_type":"text"})` | Agent hỏi nội dung bằng clarify(text), khác kỳ vọng yes_no. Cần đánh giá thủ công vì request chưa đưa nội dung bản tin; log không cho thấy gửi ngay. |
-| v2-fix/base | R13_parallel_web_and_tweets | wrong_tool | wrong_arg_value | `lookup({"query":"AI","timeframe":"day","max_results":5})`; `social_search({"query":"AI","limit":5})` | Kiểm tra observed_mismatch: lỗi ở query/topic dù nhãn case là wrong_tool. Rule routing và convention news được làm rõ; bản cuối PASS. |
-| v2-fix/base | M02_carryover_timeframe | wrong_arg_value | missing_tool_call | `social_search({"query":"robotics","search_type":"Latest","limit":5})` | Chọn social_search cho tin web. Cần giữ nguồn và thời gian từ ngữ cảnh; base bản cuối PASS. |
-| v2-fix/base | M06_switch_tool | wrong_tool | missing_tool_call | `social_search({"query":"OpenAI","search_type":"Latest","limit":5})` | Không bỏ nguồn X khi người dùng đã chuyển sang web, có lúc gọi thêm social_search. Bản base cuối và G09 group đã PASS. |
-| v3/base | R12_confirm_before_send | wrong_boundary | wrong_arg_value | `clarify({"question":"Bạn có thể cung cấp nội dung cụ thể mà bạn muốn đăng lên Telegram không?","response_type":"text"})` | Agent hỏi nội dung bằng clarify(text), khác kỳ vọng yes_no. Cần đánh giá thủ công vì request chưa đưa nội dung bản tin; log không cho thấy gửi ngay. |
-| v3/base | M06_switch_tool | wrong_tool | extra_tool_call | `lookup({"query":"OpenAI","topic":"news","timeframe":"day","max_results":5})`; `social_search({"query":"OpenAI","search_type":"Latest","limit":5})` | Không bỏ nguồn X khi người dùng đã chuyển sang web, có lúc gọi thêm social_search. Bản base cuối và G09 group đã PASS. |
-| v5-tools-complete/base | R12_confirm_before_send | wrong_boundary | wrong_arg_value | `clarify({"question":"Bạn có thể cung cấp nội dung cụ thể mà bạn muốn đăng lên Telegram không?","response_type":"text"})` | Agent hỏi nội dung bằng clarify(text), khác kỳ vọng yes_no. Cần đánh giá thủ công vì request chưa đưa nội dung bản tin; log không cho thấy gửi ngay. |
-| v5-tools-complete/group | G01_deduplicate_items | provider_error | provider_error | Không có tool call được lưu | normalize_value dùng sorted trên list[dict], phát sinh TypeError và bị bắt nhầm là provider_error. Đã sửa, thêm 9 test và chạy lại group 10/10. |
-| v6-date-context/base | R03_web_news_routing | wrong_tool | wrong_arg_value | `lookup({"query":"tin tức AI","topic":"news","timeframe":"day"})` | Tool, topic và timeframe đúng; query khác chuỗi đáp án `AI`. Giữ kết quả FAIL của bộ chấm, phân biệt với lỗi chọn tool. |
-| v6-date-context/base | R12_confirm_before_send | wrong_boundary | wrong_arg_value | `clarify({"response_type":"text"})` — hỏi nội dung cụ thể để đăng | Đáp án yêu cầu yes_no. Request chưa kèm nội dung nên cần đánh giá thủ công; không có lệnh send trong case này. |
-| Live CLI | Lượt 2 | missing_info — đánh giá thủ công | Tự suy diễn account | `timeline({"screenname":"robotics","limit":2})` | Chủ đề robotics ở lượt trước không phải tài khoản được người dùng chỉ định. Cần clarify hỏi tài khoản; đây là lỗi chưa được sửa trong phiên bản hiện tại. |
+| v0/base | R08_out_of_scope | out_of_scope | unexpected_tool_call | `send({"text":"Nguyên hàm của x^2 là \\( \\frac{x^3}{3} + C \\), trong đó \\( C \\) là hằng số tùy ý."})` | Agent gọi tool dù yêu cầu nằm ngoài phạm vi. Các lần chạy sau đã PASS, nhưng nhóm chưa thử riêng từng quy tắc để xác định yếu tố nào giúp cải thiện. |
+| v0/base | R10_missing_handle | missing_info | missing_tool_call | `timeline({"screenname":"sama"})` | Agent tự điền thông tin người dùng chưa cung cấp. v1 thêm yêu cầu hỏi lại, nhưng v2 sửa nhầm đoạn này khiến lỗi quay lại. Base ở bản sau đã PASS; phiên chat thật vẫn cho thấy hành vi tương tự cần được kiểm tra thêm. |
+| v0/base | R11_missing_url | missing_info | missing_tool_call | `fetch({"url":"https://example.com/article"})` | Agent tự điền thông tin người dùng chưa cung cấp. v1 thêm yêu cầu hỏi lại, nhưng v2 sửa nhầm đoạn này khiến lỗi quay lại. Base ở bản sau đã PASS; phiên chat thật vẫn cho thấy hành vi tương tự cần được kiểm tra thêm. |
+| v0/base | R12_confirm_before_send | wrong_boundary | missing_tool_call | `send({"text":"Bản tin này đã được đăng lên Telegram."})` | Agent chọn send khi chưa hỏi xác nhận; hành vi mong đợi là clarify(yes_no). Log tool call chưa đủ để kết luận tin nhắn đã được gửi thật. |
+| v0/base | R13_parallel_web_and_tweets | wrong_tool | wrong_arg_value | `lookup({"query":"AI news","timeframe":"day","max_results":5})`; `social_search({"query":"AI","search_type":"Latest","limit":5})` | Tên lỗi là wrong_tool, nhưng observed_mismatch cho thấy lệch ở query/topic. Nhóm làm rõ cách chọn nguồn và quy ước news; bản sau đã PASS. |
+| v0/base | R14_out_of_scope_coding | out_of_scope | unexpected_tool_call | `send({"text":"Dưới đây là một hàm Python tính số Fibonacci bằng đệ quy:\n\n```python\ndef fibonacci(n):\n    if n <= 0:\n        return 0\n    elif n == 1:\n     ...)` | Agent gọi tool dù yêu cầu nằm ngoài phạm vi. Các lần chạy sau đã PASS, nhưng nhóm chưa thử riêng từng quy tắc để xác định yếu tố nào giúp cải thiện. |
+| v1/base | R12_confirm_before_send | wrong_boundary | wrong_arg_value | `clarify({"question":"Bạn có thể cung cấp nội dung bản tin mà bạn muốn đăng lên Telegram không?","response_type":"text"})` | Agent hỏi người dùng cung cấp nội dung bằng clarify(text), còn đáp án yêu cầu yes_no. Vì yêu cầu chưa có nội dung bản tin, case này cần được đọc lại thủ công. Log không cho thấy agent gửi ngay. |
+| v1/base | M02_carryover_timeframe | wrong_arg_value | missing_tool_call | `social_search({"query":"robotics","search_type":"Latest","limit":5})` | Agent chuyển sang social_search dù người dùng đang hỏi tin web. Nguồn và khoảng thời gian cần được giữ từ lượt trước; base ở bản sau đã PASS. |
+| v2/base | R10_missing_handle | missing_info | missing_tool_call | `timeline({"screenname":"twitter","limit":5})` | Agent tự điền thông tin người dùng chưa cung cấp. v1 thêm yêu cầu hỏi lại, nhưng v2 sửa nhầm đoạn này khiến lỗi quay lại. Base ở bản sau đã PASS; phiên chat thật vẫn cho thấy hành vi tương tự cần được kiểm tra thêm. |
+| v2/base | R11_missing_url | missing_info | missing_tool_call | `fetch({"url":"https://"})` | Agent tự điền thông tin người dùng chưa cung cấp. v1 thêm yêu cầu hỏi lại, nhưng v2 sửa nhầm đoạn này khiến lỗi quay lại. Base ở bản sau đã PASS; phiên chat thật vẫn cho thấy hành vi tương tự cần được kiểm tra thêm. |
+| v2-fix/base | R12_confirm_before_send | wrong_boundary | wrong_arg_value | `clarify({"question":"Bạn có thể cung cấp nội dung cụ thể mà bạn muốn đăng lên Telegram không?","response_type":"text"})` | Agent hỏi người dùng cung cấp nội dung bằng clarify(text), còn đáp án yêu cầu yes_no. Vì yêu cầu chưa có nội dung bản tin, case này cần được đọc lại thủ công. Log không cho thấy agent gửi ngay. |
+| v2-fix/base | R13_parallel_web_and_tweets | wrong_tool | wrong_arg_value | `lookup({"query":"AI","timeframe":"day","max_results":5})`; `social_search({"query":"AI","limit":5})` | Tên lỗi là wrong_tool, nhưng observed_mismatch cho thấy lệch ở query/topic. Nhóm làm rõ cách chọn nguồn và quy ước news; bản sau đã PASS. |
+| v2-fix/base | M02_carryover_timeframe | wrong_arg_value | missing_tool_call | `social_search({"query":"robotics","search_type":"Latest","limit":5})` | Agent chuyển sang social_search dù người dùng đang hỏi tin web. Nguồn và khoảng thời gian cần được giữ từ lượt trước; base ở bản sau đã PASS. |
+| v2-fix/base | M06_switch_tool | wrong_tool | missing_tool_call | `social_search({"query":"OpenAI","search_type":"Latest","limit":5})` | Khi người dùng chuyển từ X sang web, agent vẫn dùng nguồn X hoặc gọi thêm social_search. Base ở bản sau và G09 của group đã PASS. |
+| v3/base | R12_confirm_before_send | wrong_boundary | wrong_arg_value | `clarify({"question":"Bạn có thể cung cấp nội dung cụ thể mà bạn muốn đăng lên Telegram không?","response_type":"text"})` | Agent hỏi người dùng cung cấp nội dung bằng clarify(text), còn đáp án yêu cầu yes_no. Vì yêu cầu chưa có nội dung bản tin, case này cần được đọc lại thủ công. Log không cho thấy agent gửi ngay. |
+| v3/base | M06_switch_tool | wrong_tool | extra_tool_call | `lookup({"query":"OpenAI","topic":"news","timeframe":"day","max_results":5})`; `social_search({"query":"OpenAI","search_type":"Latest","limit":5})` | Khi người dùng chuyển từ X sang web, agent vẫn dùng nguồn X hoặc gọi thêm social_search. Base ở bản sau và G09 của group đã PASS. |
+| v5-tools-complete/base | R12_confirm_before_send | wrong_boundary | wrong_arg_value | `clarify({"question":"Bạn có thể cung cấp nội dung cụ thể mà bạn muốn đăng lên Telegram không?","response_type":"text"})` | Agent hỏi người dùng cung cấp nội dung bằng clarify(text), còn đáp án yêu cầu yes_no. Vì yêu cầu chưa có nội dung bản tin, case này cần được đọc lại thủ công. Log không cho thấy agent gửi ngay. |
+| v5-tools-complete/group | G01_deduplicate_items | provider_error | provider_error | Không có tool call được lưu | normalize_value sắp xếp list[dict] bằng sorted nên phát sinh TypeError; lỗi bị ghi nhầm thành provider_error. Nhóm sửa bộ so sánh, thêm 9 test và chạy lại group đạt 10/10. |
+| v6-date-context/base | R03_web_news_routing | wrong_tool | wrong_arg_value | `lookup({"query":"tin tức AI","topic":"news","timeframe":"day"})` | Agent chọn đúng tool, topic và timeframe. Case FAIL vì query khác chuỗi `AI` trong đáp án; đây là lệch tham số, không phải chọn nhầm tool. |
+| v6-date-context/base | R12_confirm_before_send | wrong_boundary | wrong_arg_value | `clarify({"response_type":"text"})` — hỏi nội dung cụ thể để đăng | Đáp án yêu cầu yes_no, trong khi agent hỏi thêm nội dung. Do yêu cầu chưa kèm bản tin, cần xem xét thủ công; case này không có lệnh send. |
+| Live CLI | Lượt 2 | missing_info — đánh giá thủ công | Tự suy diễn account | `timeline({"screenname":"robotics","limit":2})` | Agent lấy chủ đề robotics ở lượt trước làm tên tài khoản. Đúng ra cần hỏi người dùng muốn xem account nào. Phiên này chưa xử lý đúng tình huống đó. |
 
-## B3. Team Eval Cases
+## B3. Bộ câu hỏi đánh giá của nhóm
 
-Bộ group có **10 case: 5 single turn và 5 multi turn**. Kết quả bên dưới lấy từ [v5-evalfix_B_group_openrouter_20261110T144452606199.json](../runs/v5-evalfix_B_group_openrouter_20261110T144452606199.json).
+Nhóm xây dựng **10 case: 5 single turn và 5 multi turn** để kiểm tra chọn tool, truyền tham số và xử lý hội thoại. Bảng dưới đây dùng kết quả từ [v5-evalfix_B_group_openrouter_20261110T144452606199.json](../runs/v5-evalfix_B_group_openrouter_20261110T144452606199.json).
 
 | Case ID | Loại | Nội dung kiểm tra | Tool/hành vi mong đợi | Kết quả |
 |---|---|---|---|---|
@@ -143,34 +141,34 @@ Bộ group có **10 case: 5 single turn và 5 multi turn**. Kết quả bên dư
 | G09_switch_to_web | Multi turn | Chuyển sang lookup và không gọi thêm social_search. | `lookup({"query":"cybersecurity","topic":"news","timeframe":"day"})` | PASS |
 | G10_confirm_known_content | Multi turn | Hỏi xác nhận khi đã có nội dung và đích gửi; chưa được gọi send. | `clarify({"response_type":"yes_no"})` | PASS |
 
-G01 kiểm tra model chọn `deduplicate` và truyền đủ danh sách gốc; unit test riêng kiểm tra code có loại đúng bản ghi trùng hay không. G10 có đủ nội dung và đích gửi, giúp kiểm tra xác nhận rõ hơn R12 trong base. Group chưa có case phân biệt chủ đề vừa tìm trên web với handle X ở lượt sau; lỗi này được phát hiện trong live chat.
+Ở G01, model cần chọn `deduplicate` và truyền đầy đủ danh sách ban đầu; việc lọc trùng có đúng hay không được kiểm tra bằng unit test riêng. G10 cung cấp sẵn nội dung và đích gửi nên yêu cầu xin xác nhận rõ hơn R12 của base. Bộ group hiện chưa bao phủ tình huống đổi từ chủ đề web sang yêu cầu bài đăng X mà thiếu account; nhóm phát hiện khoảng trống này khi chat thật.
 
-## B4. Live Chat Evidence
+## B4. Kết quả thử hội thoại thực tế
 
-Transcript CLI: [v5-evalfix_openrouter_20261110T144638732811.transcript.json](../transcripts/v5-evalfix_openrouter_20261110T144638732811.transcript.json). Artifact: `v5-evalfix+pcf82e7a93a6b+t1dfc05a44ef2`. Có đủ **3 lượt live**; `/exit` kết thúc phiên.
+Transcript CLI: [v5-evalfix_openrouter_20261110T144638732811.transcript.json](../transcripts/v5-evalfix_openrouter_20261110T144638732811.transcript.json). Artifact: `v5-evalfix+pcf82e7a93a6b+t1dfc05a44ef2`. Phiên có **3 lượt live** và kết thúc bằng `/exit`.
 
 | Lượt | Yêu cầu | Tool call thực tế | Trạng thái chạy | Đánh giá thủ công |
 |---|---|---|---|---|
-| 1 | Tìm 3 tin tức về robotics trên web trong tuần này, kèm nguồn. | `lookup({"query":"robotics","topic":"news","timeframe":"week","max_results":3})` | answered | Đúng tool và args: lookup(news, week, 3); tool trả 3 item, câu trả lời có nguồn. Chưa kiểm chứng thủ công từng bài gốc. |
-| 2 | Lấy 2 bài đăng mới nhất trên X giúp tôi. | `timeline({"screenname":"robotics","limit":2})` | answered | CHƯA ĐÚNG: tự chọn account robotics từ chủ đề trước. Mong đợi hỏi người dùng tài khoản nào. Tool trả dữ liệu thành công không đồng nghĩa hiểu đúng yêu cầu. |
-| 3 | Tài khoản nasa. | `timeline({"screenname":"nasa","limit":2})` | answered | Đúng sửa account sang nasa và giữ limit=2; tool trả 2 item. Đây là lượt người dùng sửa thông tin, không phải bằng chứng agent đã hỏi lại đúng ở lượt 2. |
+| 1 | Tìm 3 tin tức về robotics trên web trong tuần này, kèm nguồn. | `lookup({"query":"robotics","topic":"news","timeframe":"week","max_results":3})` | answered | Agent chọn đúng lookup(news, week, 3), nhận 3 kết quả và trả lời kèm nguồn. Nhóm chưa đối chiếu thủ công từng bài gốc. |
+| 2 | Lấy 2 bài đăng mới nhất trên X giúp tôi. | `timeline({"screenname":"robotics","limit":2})` | answered | Chưa đúng: agent tự chọn account robotics từ chủ đề trước thay vì hỏi lại. Tool lấy được dữ liệu, nhưng dữ liệu đó chưa đáp ứng đúng ý người dùng. |
+| 3 | Tài khoản nasa. | `timeline({"screenname":"nasa","limit":2})` | answered | Agent đổi account sang nasa, giữ limit=2 và nhận 2 kết quả. Lượt này cho thấy agent tiếp nhận thông tin được sửa; lượt 2 vẫn chưa hỏi lại đúng. |
 
-`status=answered` chỉ cho biết vòng chat đã trả lời, không phải điểm PASS về chất lượng. Trong phiên này agent trả lời bằng tiếng Anh dù người dùng hỏi tiếng Việt; đây là điểm cần cải thiện cho trải nghiệm demo.
+Phiên chat cho thấy cần đọc cả nội dung và tool call, vì `status=answered` chỉ báo đã có câu trả lời. Agent cũng trả lời bằng tiếng Anh dù người dùng hỏi tiếng Việt; nhóm cần cải thiện điểm này để bản demo dễ sử dụng hơn.
 
-## B4.1. Kiểm tra Cloud sau sửa ngày — v6-date-context
+## B4.1. Thử lại trên Cloud sau khi sửa ngày — v6-date-context
 
 Transcript tải từ UI: [ui_v6-date-context_48233e87253141f3b1511624408b2be5.transcript.json](../transcripts/ui_v6-date-context_48233e87253141f3b1511624408b2be5.transcript.json), có **2 lượt**, đều `answered`. Artifact Cloud: `v6-date-context+pc5fd2628fcf2+t190818f266ea`. Mỗi lượt có `runtime_context.current_date=2026-11-10`, `utc_offset=+07:00`.
 
 | Lượt | Quan sát từ transcript | Đánh giá thủ công |
 |---|---|---|
-| 1 — Giá vàng hôm nay | `lookup(query="giá vàng", topic="general", max_age_hours=0)`, không truyền timeframe; retrieved_at=2026-11-10T16:54:45+07:00. Kết quả PNJ/BTMC không có published_date trong log. | Đã nhận đồng hồ đúng và yêu cầu lấy live. Tuy nhiên query không ghi ngày cụ thể, chưa xác minh thời điểm/đơn vị của giá; câu trả lời vẫn khẳng định “hôm nay” và gán VNĐ cho số trong snippet thiếu đơn vị. Chưa đạt kiểm tra tính hiện thời và đơn vị. |
-| 2 — Ngày hiện tại và giá xăng | Trả lời đúng 10/11/2026. Gọi lookup cho giá xăng và một lookup khác cho ngày hiện tại; không truyền max_age_hours. Nguồn VnExpress hiển thị 07/11/2026, bảng ghi giá từ 15:00 05/11/2026. | PASS riêng việc trả lời ngày. Chưa xác minh bảng giá 05/11 còn hiệu lực ngày 10/11; không kết luận giá sai chỉ vì ngày áp dụng cũ, nhưng chưa đủ bằng chứng gọi là giá hiện tại. Lookup ngày hiện tại là dư vì đã có runtime_context. |
+| 1 — Giá vàng hôm nay | `lookup(query="giá vàng", topic="general", max_age_hours=0)`, không truyền timeframe; retrieved_at=2026-11-10T16:54:45+07:00. Kết quả PNJ/BTMC không có published_date trong log. | Ngày giờ đã đúng và tool được yêu cầu lấy live. Tuy vậy, query chưa ghi ngày cụ thể, nguồn chưa đủ thông tin về thời điểm và đơn vị. Câu trả lời vẫn gọi là giá hôm nay và gán VNĐ, nên chưa đạt yêu cầu kiểm chứng giá. |
+| 2 — Ngày hiện tại và giá xăng | Trả lời đúng 10/11/2026. Gọi lookup cho giá xăng và một lookup khác cho ngày hiện tại; không truyền max_age_hours. Nguồn VnExpress hiển thị 07/11/2026, bảng ghi giá từ 15:00 05/11/2026. | Agent trả lời đúng ngày. Với giá xăng, chưa kiểm tra bảng giá 05/11 có còn hiệu lực ngày 10/11 hay không. Ngày áp dụng cũ chưa có nghĩa giá sai, nhưng cần xác minh trước khi gọi là giá hiện tại. Lượt tìm ngày hiện tại cũng không cần thiết vì đã có runtime_context. |
 
-**Đối chiếu artifact — đã đính chính:** hai run eval v6 dùng `pcf82e7a93a6b+t0bedf4dee6f6`, transcript Cloud dùng `pc5fd2628fcf2+t190818f266ea`. Chuẩn hóa CRLF thành LF trên local cho đúng cả hai hash Cloud, nên prompt/tools khớp nội dung; `versioning.py` đang hash bytes nguyên bản. Hai remote ntc cùng commit `9b3cc29` tại lúc kiểm tra. Giữ nguyên hash lịch sử. Điểm 90%/100% vẫn là điểm của eval, không phải điểm phiên UI/giá live vì đường chạy khác. Chi tiết: [artifact_comparison.md](artifact_comparison.md).
+**Kết quả đối chiếu artifact:** hai run eval v6 dùng `pcf82e7a93a6b+t0bedf4dee6f6`, transcript Cloud dùng `pc5fd2628fcf2+t190818f266ea`. Chuẩn hóa CRLF thành LF trên local cho đúng cả hai hash Cloud, nên prompt/tools khớp nội dung; `versioning.py` đang hash bytes nguyên bản. Hai remote ntc cùng commit `9b3cc29` tại lúc kiểm tra. Giữ nguyên hash lịch sử. Điểm 90%/100% vẫn là điểm của eval, không phải điểm phiên UI/giá live vì đường chạy khác. Chi tiết: [artifact_comparison.md](artifact_comparison.md).
 
-Kết luận giới hạn: đồng hồ UTC+7 đã xuất hiện đúng và model trả lời đúng ngày trong lượt 2; prompt/tools đã được đối chiếu khớp nội dung, còn xử lý nguồn giá cần sửa/kiểm chứng. Giữ nguyên transcript gốc, không chấm cả phiên PASS chỉ từ `status=answered`.
+Qua hai lượt này, có thể xác nhận app đã truyền đúng ngày UTC+7 và model trả lời đúng ngày ở lượt 2. Prompt/tools cũng đã được đối chiếu khớp nội dung. Phần nguồn giá vẫn cần xử lý thêm, nên nhóm giữ nguyên transcript và chưa đánh giá cả phiên là thành công chỉ dựa vào `status=answered`.
 
-## B5. Tool, UI và kiểm thử bổ sung
+## B5. Hoàn thiện tool, giao diện và kiểm thử
 
 | Hạng mục | Bằng chứng | Kết quả và giới hạn |
 |---|---|---|
@@ -181,42 +179,49 @@ Kết luận giới hạn: đồng hồ UTC+7 đã xuất hiện đúng và mode
 | Test offline | tests/; artifacts/tools_unit_tests.txt | 210 PASS, 0 FAIL, 0 ERROR, 0 SKIP: 175 test tool trước đó, 9 test bộ chấm và 26 test ngày giờ/độ mới nguồn. |
 | Sửa bộ chấm eval | run_eval.py; tests/test_eval_structured_args.py; hai group run JSON | Giữ so sánh scalar list không phụ thuộc thứ tự; list object/nested list giữ thứ tự. Không đổi dữ liệu eval để né lỗi. |
 
-Đã thay toàn bộ 17 stub TODO bằng test có assertion. Các lời gọi HTTP trong unit test được mock, không tiêu credit và không gửi Telegram thật. Năm test PDF dùng thư mục tạm riêng để tránh lỗi quyền truy cập `pytest-of-Admin` trên Windows.
+Nhóm đã điền đủ 17 test TODO, mỗi test có assertion để kiểm tra hành vi. Các lời gọi HTTP được mock nên chạy offline, không tiêu credit hay gửi Telegram thật. Năm test PDF dùng thư mục tạm riêng để tránh lỗi quyền truy cập `pytest-of-Admin` trên Windows.
 
-Các lỗi tool có regression test:
+Trong lúc viết test, nhóm phát hiện và giữ lại test cho các lỗi sau:
 
 - `send` từng chấp nhận chuỗi `"false"`, `"true"` và số `1` như xác nhận. Bản sửa chỉ chấp nhận boolean `True`, kiểm tra `ok=true` của Telegram và che token trong lỗi.
 - `timeline` từng truyền nguyên handle có khoảng trắng/@ và có thể thiếu URL khi API không trả handle. Bản sửa chuẩn hóa handle và dựng URL từ account đã biết.
 - `paper_text` từng áp tối thiểu 1000 ký tự, làm sai yêu cầu `max_chars=4`. Bản sửa tôn trọng giới hạn dương.
 
-Nhóm test chọn để kiểm tra ba lỗi trên có **5 FAIL, 3 PASS trên code cũ**, rồi PASS sau sửa; log trước sửa: `artifacts/tools_regression_before.txt`. Sau đó bổ sung 9 test bộ chấm: trước sửa **8 FAIL, 1 PASS**, sau sửa cả 9 PASS; test CLI offline còn xác nhận `deduplicate` thực thi và tạo run có measured_cases=1 thay vì provider_error.
+Các test được chọn cho ba lỗi trên cho kết quả **5 FAIL, 3 PASS trên code cũ** và đều PASS sau khi sửa. Log trước sửa nằm ở `artifacts/tools_regression_before.txt`. Với 9 test bổ sung cho bộ chấm, kết quả trước sửa là **8 FAIL, 1 PASS**; sau sửa, cả 9 đều PASS. Test CLI offline cũng xác nhận `deduplicate` thực thi và tạo run có measured_cases=1 thay vì provider_error.
 
-Ví dụ khác biệt giữa hai lớp kiểm tra: model eval có thể thấy đúng tên `send` và args; unit test mới xác minh chuỗi `"false"` thực sự không được phép đi qua nhánh gửi. Tương tự, tool deduplicate đã qua unit test nhưng scorer cũ vẫn làm G01 lỗi do không chấm được danh sách object.
+Những lỗi này cho thấy cần cả model eval lẫn unit test. Eval có thể ghi nhận đúng tên `send` và tham số, còn unit test kiểm tra chuỗi `"false"` có bị chặn trước khi gửi hay không. Tương tự, code deduplicate đã qua unit test nhưng G01 vẫn lỗi vì bộ chấm cũ không xử lý được danh sách object.
 
 ### B5.1. Bổ sung kiểm tra ngày hiện tại — v6-date-context
 
-Một lượt hỏi giá vàng trên Cloud gắn nhãn “hôm nay” với 07/11/2026 trong khi người dùng đang hỏi ngày 10/11/2026. Kiểm tra code xác nhận vòng chat chưa cấp ngày hiện tại cho model, lookup mặc định lọc theo tuần và không giữ trường ngày của nguồn. Chưa có transcript Cloud của riêng lượt lỗi để xác định chính xác các arguments model đã gửi.
+Khi thử giá vàng trên Cloud ngày 10/11/2026, agent lại ghi “hôm nay” là 07/11/2026. Nhóm kiểm tra code và thấy vòng chat chưa truyền ngày hiện tại cho model, lookup mặc định lọc theo tuần và bỏ trường ngày của nguồn. Do chưa có transcript riêng của lượt lỗi ban đầu, nhóm chưa xác định được chính xác model đã gửi tham số nào.
 
-Bản sửa cấp thời gian UTC+7 mới mỗi lượt, ghi `runtime_context` vào transcript, hiển thị ngày Việt Nam trên UI và giữ `published_date` khi API có trả. Lookup bỏ mặc định lọc theo tuần; thêm `max_age_hours=0` để yêu cầu lấy trang live khi hỏi giá/thời tiết cập nhật liên tục. Ngày nguồn và thời điểm truy xuất được phân biệt; model được yêu cầu không đổi nhãn số liệu cũ thành giá hôm nay nếu chưa xác minh được thời điểm.
+Bản sửa bổ sung giờ Việt Nam UTC+7 ở mỗi lượt, lưu `runtime_context` trong transcript và hiển thị ngày trên UI. Lookup giữ `published_date` khi API có trả, bỏ mặc định lọc theo tuần và thêm `max_age_hours=0` để yêu cầu lấy trang live khi cần dữ liệu cập nhật liên tục. Model cũng được hướng dẫn phân biệt ngày của nguồn với giờ truy xuất, đồng thời nói rõ nếu chưa xác minh được thời điểm của số liệu.
 
-Thêm **26 test** cho chuyển ngày UTC/Vietnam, phiên qua nửa đêm, metadata các nhánh thoát và payload/nguồn thời gian; tổng **210 PASS**. Đây là kiểm tra offline. Transcript Cloud bổ sung ở B4.1 xác nhận runtime date và câu trả lời ngày, nhưng chưa xác minh giá hiện tại. Hai run v6 mới đạt base **18/20 (90%)**, group **10/10 (100%)**, không có provider_error. So với lần base v5 đã lưu, điểm giảm 5 điểm phần trăm; đây là so sánh hai lần chạy, chưa đủ để quy nguyên nhân cho riêng thay đổi ngày giờ. Eval gọi `ResearchAgent.run` trực tiếp, không qua `run_model_tool_loop` của CLI/UI nên không cấp system context ngày giờ mới. Vì thế kết quả này đo chọn tool/args với declaration và implementation v6, không xác minh trọn vòng chat hay giá vàng hôm nay. R03 lệch query; R12 lệch response_type như B2. Chi tiết: [date_context_fix.md](date_context_fix.md).
+Nhóm thêm **26 test** cho chuyển ngày UTC/Vietnam, phiên qua nửa đêm, thông tin lưu ở các nhánh kết thúc và dữ liệu thời gian gửi/nhận từ tool; tổng bộ test đạt **210 PASS**. Transcript ở B4.1 cho thấy ngày đã đúng, nhưng giá hiện tại vẫn chưa được xác minh đầy đủ.
 
-## B6. Reflection
+Hai run v6 đạt base **18/20 (90%)** và group **10/10 (100%)**, không có provider_error. So với lần base v5 đã lưu, điểm giảm 5 điểm phần trăm. Hai lần chạy chưa đủ để kết luận riêng thay đổi ngày giờ gây giảm điểm; R03 lệch query và R12 lệch response_type như đã phân tích ở B2.
 
-- **Thay đổi trong prompt:** hỏi thông tin còn thiếu, xác nhận trước gửi, chọn nguồn và áp dụng sửa đổi ở lượt sau. Vòng v2 thay nhầm đoạn đã gây hồi quy, cho thấy cần lưu snapshot và kiểm tra diff trước mỗi run.
-- **Thay đổi trong tools.yaml:** mô tả rõ khi dùng/không dùng, phân biệt tài khoản với chủ đề, topic=news, timeframe, search_type và giới hạn tham số. Validation trong code hỗ trợ input sai từ model; description không thay thế validation.
-- **Trường hợp cần đánh giá thủ công:** R12 thiếu nội dung nhưng đáp án chỉ chấp nhận yes_no; local TypeError bị log thành provider_error; live status=answered vẫn có thể chọn sai account. Không ghi những trường hợp này thành thành công chỉ vì tool trả dữ liệu.
-- **Giới hạn của kết quả:** base và group là tập nhỏ, group do nhóm thiết kế và một số query gọi tên tool rõ ràng. Điểm group 100% không chứng minh độ tin cậy chung. Phiên live đã bộc lộ lỗi chuyển chủ đề thành handle mà bộ group hiện tại chưa kiểm tra.
-- **Ưu tiên tiếp theo:** thêm regression case cho chuỗi “tin robotics trên web → lấy bài trên X nhưng chưa nêu account”, rồi kiểm chứng quy tắc không suy diễn topic thành handle ở một version mới. Bổ sung quy tắc trả lời cùng ngôn ngữ người dùng. Đây là việc đề xuất tiếp, chưa ghi nhận đã sửa hoặc đã có điểm mới.
-- **Tái lập và nộp bài:** giữ log lỗi lẫn log thành công, đối chiếu hash prompt/tools và code scorer; che chuỗi nhạy cảm trước khi push. Bản báo cáo này không thực hiện commit/push thay người dùng.
+Một giới hạn cần lưu ý là eval gọi `ResearchAgent.run` trực tiếp, còn CLI/UI dùng `run_model_tool_loop` có context ngày giờ. Vì vậy, điểm eval phản ánh việc chọn tool và tham số ở bản v6, chưa kiểm tra toàn bộ vòng chat hay độ đúng của giá vàng hôm nay. Chi tiết sửa lỗi được lưu trong [date_context_fix.md](date_context_fix.md).
+
+## B6. Điều nhóm rút ra sau bài lab
+
+Qua các vòng sửa prompt, nhóm thấy việc hỏi lại, xin xác nhận và giữ ngữ cảnh cần được diễn đạt rõ. Lần v2 thay nhầm đoạn hỏi thông tin khiến lỗi quay lại, dù mục đích ban đầu là bổ sung xác nhận. Từ đó, nhóm cần lưu bản prompt trước mỗi lần sửa và đọc diff trước khi chạy để biết mình đang kiểm chứng giả thuyết nào.
+
+Mô tả trong tools.yaml giúp model hiểu khi nào dùng từng tool và truyền tham số theo quy ước nào. Tuy nhiên, code vẫn phải kiểm tra đầu vào. Trường hợp send nhận chuỗi false như một xác nhận hợp lệ cho thấy mô tả đúng chưa đủ để đảm bảo hành động đúng.
+
+Nhóm cũng học được rằng phải đọc log trước khi kết luận từ điểm số. R12 hỏi thêm nội dung nhưng đáp án chỉ chấp nhận yes_no; lỗi TypeError của bộ chấm lại bị ghi thành provider_error. Trong phiên chat thật, agent có thể trả lời và lấy được dữ liệu nhưng vẫn chọn nhầm account. Những tình huống này cần được ghi rõ thay vì chỉ nhìn PASS/FAIL hoặc trạng thái answered.
+
+Base và group đều là các tập nhỏ; group do nhóm tự thiết kế, trong đó có yêu cầu gọi tên tool khá rõ. Vì thế, điểm group 100% chưa cho biết agent đáng tin cậy đến đâu với yêu cầu mới. Phiên live đã bộc lộ lỗi lấy chủ đề làm handle mà bộ group chưa có case kiểm tra.
+
+Việc cần làm tiếp là bổ sung regression cho chuỗi “tin robotics trên web → lấy bài trên X nhưng chưa nêu account”, kiểm tra lại xử lý nguồn giá và cho agent trả lời cùng ngôn ngữ người dùng. Các việc này chưa có kết quả mới trong báo cáo. Khi bàn giao, nhóm giữ cả log lỗi lẫn log thành công, đối chiếu hash cùng code bộ chấm và kiểm tra thông tin nhạy cảm trước khi đưa lên repo.
 
 ## B7. Small Local Model Challenge (bonus)
 
-Chưa có run Ollama trong tập bằng chứng hiện tại. Không yêu cầu điểm cho bonus local model; không tạo số liệu so sánh cloud/local khi chưa chạy.
+Nhóm chưa chạy Ollama trong phần bằng chứng hiện có nên chưa có kết quả so sánh cloud/local. Phần bonus này chưa được thực hiện và chưa được tính vào kết quả báo cáo.
 
 ## B8. Phân công công việc tiếp theo
 
-Phân công theo REPORT và kết quả đối chiếu hiện tại; đây là trách nhiệm hoàn thiện/bàn giao, không xác nhận tác giả của các thay đổi đã có trước đây.
+Bảng dưới đây là phương án phân công dự kiến dựa trên những việc còn lại trong báo cáo. Nhóm sẽ bàn lại trước khi chốt người phụ trách; bảng này không dùng để xác định ai đã làm các phần trước đó.
 
 | Thành viên | Phụ trách chính | Đầu ra |
 |---|---|---|
@@ -226,4 +231,4 @@ Phân công theo REPORT và kết quả đối chiếu hiện tại; đây là t
 | Bảo | Lookup/fetch, ngày hiệu lực và đơn vị của giá | Kiểm tra nguồn cũ/thiếu đơn vị; không khẳng định giá hôm nay khi chưa xác minh. |
 | Nam | QA tools, regression và group B3/B5 | Test có assertion, case bổ sung, log pytest và eval trên bản tích hợp. |
 
-Chi tiết file phụ trách, tiêu chí hoàn thành, thứ tự phối hợp và phần thuyết trình: [TASK_ALLOCATION.md](TASK_ALLOCATION.md).
+Phạm vi file, tiêu chí hoàn thành và thứ tự phối hợp được ghi trong bản phân công dự kiến: [TASK_ALLOCATION.md](TASK_ALLOCATION.md).
