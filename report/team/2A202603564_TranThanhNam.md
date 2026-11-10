@@ -5,7 +5,6 @@
 * **Họ tên:** Trần Thành Nam
 * **MSSV:** 2A202603564
 * **Email:** thanhnam120304@gmail.com
-* **Nhóm / dự án:** Research Agent Tool Eval — Day 03 Lab v2
 * **Vai trò:** Eval \& Unit Test (thành viên phụ trách kiểm thử)
 
 ## 2\. Phần việc phụ trách
