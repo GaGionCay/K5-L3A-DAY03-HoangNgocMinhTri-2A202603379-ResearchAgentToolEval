@@ -7,7 +7,7 @@
 ## Team
 
 - Team: HoangNgocMinhTri - 2A202603379
-- Members: (Sẽ bổ sung sau)
+- Members: Cường, Trí, Ánh, Bảo, Nam (họ tên đầy đủ và mã sinh viên sẽ bổ sung)
 - Provider/model: OpenRouter / openai/gpt-4o-mini
 
 ---
@@ -22,11 +22,11 @@
 
 Bạn có thể nhờ agent tìm tin trên web, theo dõi bài đăng trên X/Twitter, đọc một đường link và gom kết quả thành bản tin kèm nguồn. Agent còn có công cụ tìm paper trên arXiv, tra cứu chính sách nội bộ, lọc kết quả trùng URL và gửi bản tin qua Telegram sau khi được xác nhận.
 
-**Mở demo:** [Research Agent](https://monitor-chemistry-feb-spiritual.trycloudflare.com)
+**Mở demo:** [Research Agent](https://k5-l3a-day03-hoangngocminhtri-2a202603379-researchagenttooleva.streamlit.app)
 
 Nhập yêu cầu vào ô chat; nếu agent cần bổ sung tài khoản hoặc URL, trả lời ngay ở lượt tiếp theo. Chọn **Cuộc trò chuyện mới** khi muốn bắt đầu chủ đề khác.
 
-Link demo là link tạm thời, hoạt động khi nhóm giữ Streamlit và Cloudflare Tunnel chạy. Nếu khởi động lại tunnel, nhóm sẽ cập nhật địa chỉ mới.
+Demo được triển khai trên Streamlit Community Cloud, không phụ thuộc việc máy cá nhân còn bật hay không. App có thể cần thời gian khởi động lại sau khi ngủ; các tool live vẫn cần API key và hạn mức hợp lệ.
 
 ## A2. Tool agent có
 
@@ -84,11 +84,15 @@ Số liệu dưới đây lấy từ run JSON và `version_log.csv`. Provider/mo
 | v5-tools-complete | base | tools.yaml; tools/; tests/ | Hoàn thiện mô tả, validation và tool mới; thay đổi gộp, không cô lập từng yếu tố | 90% | 19/20 case đo được (95%) | [v5-tools-complete_B_base_openrouter_20261110T122338476859.json](../runs/v5-tools-complete_B_base_openrouter_20261110T122338476859.json) |
 | v5-tools-complete | group | Bộ group lần đầu | Đo 10 case nhóm; phát hiện lỗi comparator ở G01 | N/A — bộ group mới | 9/9 case đo được (100%); 1 case không đo được | [v5-tools-complete_B_group_openrouter_20261110T143816074250.json](../runs/v5-tools-complete_B_group_openrouter_20261110T143816074250.json) |
 | v5-evalfix | group | run_eval.py; test_eval_structured_args.py | Chấm danh sách object không bị TypeError | 9/10 case đo được; 1 lỗi bộ chấm | 10/10 case đo được (100%) | [v5-evalfix_B_group_openrouter_20261110T144452606199.json](../runs/v5-evalfix_B_group_openrouter_20261110T144452606199.json) |
+| v6-date-context | base | tools.yaml; lookup; runtime chat/UI | Đo lại chọn tool và args sau sửa; eval không chạy context ngày giờ của chat/UI | 95% (v5-tools-complete) | 18/20 case đo được (90%) | [v6-date-context_B_base_openrouter_20261110T170026806316.json](../runs/v6-date-context_B_base_openrouter_20261110T170026806316.json) |
+| v6-date-context | group | tools.yaml; lookup; runtime chat/UI | Đo lại chọn tool và args sau sửa; eval không chạy context ngày giờ của chat/UI | 100% (v5-evalfix) | 10/10 case đo được (100%) | [v6-date-context_B_group_openrouter_20261110T170120261117.json](../runs/v6-date-context_B_group_openrouter_20261110T170120261117.json) |
 
 | Bản đo | Case PASS | Routing | Arguments | Multi turn | Case không đo được |
 |---|---|---|---|---|---|
 | Base — v5-tools-complete | 19/20 | 100% | 95% | 100% | 0 |
 | Group — v5-evalfix | 10/10 | 100% | 100% | 100% | 0 |
+| Base — v6-date-context | 18/20 | 100% | 90% | 100% | 0 |
+| Group — v6-date-context | 10/10 | 100% | 100% | 100% | 0 |
 
 Base và group là hai bộ dữ liệu khác nhau. Lần group đầu in accuracy 100% nhưng chỉ đo được 9 case; G01 bị ghi nhãn `provider_error` do lỗi bộ chấm cục bộ, không phải bằng chứng API bị lỗi. Sau khi sửa comparator, chạy lại mới có đủ 10/10 PASS. Không sửa nội dung case để làm tăng điểm.
 
@@ -118,6 +122,8 @@ Các FAIL của eval được giữ nguyên trong log; phần nhận xét dướ
 | v3/base | M06_switch_tool | wrong_tool | extra_tool_call | `lookup({"query":"OpenAI","topic":"news","timeframe":"day","max_results":5})`; `social_search({"query":"OpenAI","search_type":"Latest","limit":5})` | Không bỏ nguồn X khi người dùng đã chuyển sang web, có lúc gọi thêm social_search. Bản base cuối và G09 group đã PASS. |
 | v5-tools-complete/base | R12_confirm_before_send | wrong_boundary | wrong_arg_value | `clarify({"question":"Bạn có thể cung cấp nội dung cụ thể mà bạn muốn đăng lên Telegram không?","response_type":"text"})` | Agent hỏi nội dung bằng clarify(text), khác kỳ vọng yes_no. Cần đánh giá thủ công vì request chưa đưa nội dung bản tin; log không cho thấy gửi ngay. |
 | v5-tools-complete/group | G01_deduplicate_items | provider_error | provider_error | Không có tool call được lưu | normalize_value dùng sorted trên list[dict], phát sinh TypeError và bị bắt nhầm là provider_error. Đã sửa, thêm 9 test và chạy lại group 10/10. |
+| v6-date-context/base | R03_web_news_routing | wrong_tool | wrong_arg_value | `lookup({"query":"tin tức AI","topic":"news","timeframe":"day"})` | Tool, topic và timeframe đúng; query khác chuỗi đáp án `AI`. Giữ kết quả FAIL của bộ chấm, phân biệt với lỗi chọn tool. |
+| v6-date-context/base | R12_confirm_before_send | wrong_boundary | wrong_arg_value | `clarify({"response_type":"text"})` — hỏi nội dung cụ thể để đăng | Đáp án yêu cầu yes_no. Request chưa kèm nội dung nên cần đánh giá thủ công; không có lệnh send trong case này. |
 | Live CLI | Lượt 2 | missing_info — đánh giá thủ công | Tự suy diễn account | `timeline({"screenname":"robotics","limit":2})` | Chủ đề robotics ở lượt trước không phải tài khoản được người dùng chỉ định. Cần clarify hỏi tài khoản; đây là lỗi chưa được sửa trong phiên bản hiện tại. |
 
 ## B3. Team Eval Cases
@@ -151,6 +157,19 @@ Transcript CLI: [v5-evalfix_openrouter_20261110T144638732811.transcript.json](..
 
 `status=answered` chỉ cho biết vòng chat đã trả lời, không phải điểm PASS về chất lượng. Trong phiên này agent trả lời bằng tiếng Anh dù người dùng hỏi tiếng Việt; đây là điểm cần cải thiện cho trải nghiệm demo.
 
+## B4.1. Kiểm tra Cloud sau sửa ngày — v6-date-context
+
+Transcript tải từ UI: [ui_v6-date-context_48233e87253141f3b1511624408b2be5.transcript.json](../transcripts/ui_v6-date-context_48233e87253141f3b1511624408b2be5.transcript.json), có **2 lượt**, đều `answered`. Artifact Cloud: `v6-date-context+pc5fd2628fcf2+t190818f266ea`. Mỗi lượt có `runtime_context.current_date=2026-11-10`, `utc_offset=+07:00`.
+
+| Lượt | Quan sát từ transcript | Đánh giá thủ công |
+|---|---|---|
+| 1 — Giá vàng hôm nay | `lookup(query="giá vàng", topic="general", max_age_hours=0)`, không truyền timeframe; retrieved_at=2026-11-10T16:54:45+07:00. Kết quả PNJ/BTMC không có published_date trong log. | Đã nhận đồng hồ đúng và yêu cầu lấy live. Tuy nhiên query không ghi ngày cụ thể, chưa xác minh thời điểm/đơn vị của giá; câu trả lời vẫn khẳng định “hôm nay” và gán VNĐ cho số trong snippet thiếu đơn vị. Chưa đạt kiểm tra tính hiện thời và đơn vị. |
+| 2 — Ngày hiện tại và giá xăng | Trả lời đúng 10/11/2026. Gọi lookup cho giá xăng và một lookup khác cho ngày hiện tại; không truyền max_age_hours. Nguồn VnExpress hiển thị 07/11/2026, bảng ghi giá từ 15:00 05/11/2026. | PASS riêng việc trả lời ngày. Chưa xác minh bảng giá 05/11 còn hiệu lực ngày 10/11; không kết luận giá sai chỉ vì ngày áp dụng cũ, nhưng chưa đủ bằng chứng gọi là giá hiện tại. Lookup ngày hiện tại là dư vì đã có runtime_context. |
+
+**Đối chiếu artifact — đã đính chính:** hai run eval v6 dùng `pcf82e7a93a6b+t0bedf4dee6f6`, transcript Cloud dùng `pc5fd2628fcf2+t190818f266ea`. Chuẩn hóa CRLF thành LF trên local cho đúng cả hai hash Cloud, nên prompt/tools khớp nội dung; `versioning.py` đang hash bytes nguyên bản. Hai remote ntc cùng commit `9b3cc29` tại lúc kiểm tra. Giữ nguyên hash lịch sử. Điểm 90%/100% vẫn là điểm của eval, không phải điểm phiên UI/giá live vì đường chạy khác. Chi tiết: [artifact_comparison.md](artifact_comparison.md).
+
+Kết luận giới hạn: đồng hồ UTC+7 đã xuất hiện đúng và model trả lời đúng ngày trong lượt 2; prompt/tools đã được đối chiếu khớp nội dung, còn xử lý nguồn giá cần sửa/kiểm chứng. Giữ nguyên transcript gốc, không chấm cả phiên PASS chỉ từ `status=answered`.
+
 ## B5. Tool, UI và kiểm thử bổ sung
 
 | Hạng mục | Bằng chứng | Kết quả và giới hạn |
@@ -158,7 +177,7 @@ Transcript CLI: [v5-evalfix_openrouter_20261110T144638732811.transcript.json](..
 | Tool mới deduplicate | tools/deduplicate/; G01; tests/test_tools_todo.py | Đã có implementation, TOOL.md, registry và schema; G01 PASS. Lọc theo URL, không phát hiện trùng nội dung khác URL. |
 | Telegram send | tests/test_tool_validation.py; tests/test_tools_todo.py; G10 | Guardrail và gửi HTTP bằng mock PASS; G10 hỏi xác nhận PASS. Chưa có bằng chứng gửi Telegram thật trong bộ transcript CLI này. |
 | arXiv / policy | tests/test_tool_validation.py; tests/test_tools_todo.py | Test metadata, retry 429, PDF cục bộ và trust boundary PASS. Không dùng test mock để khẳng định mọi API live hoạt động. |
-| UI | app.py; transcripts/ui_v3_*.transcript.json; link ở Phần A | Đã có UI và transcript theo phiên. Link tunnel tạm, phụ thuộc máy và hai tiến trình còn chạy. |
+| UI | app.py; transcripts/ui_*.transcript.json; link ở Phần A | Đã có UI, transcript theo phiên và triển khai Streamlit Cloud. Transcript cũ giữ nguyên; B4.1 bổ sung transcript Cloud v6 gồm 2 lượt, đúng ngày nhưng còn giới hạn về nguồn giá; hash khác eval chỉ do LF/CRLF. |
 | Test offline | tests/; artifacts/tools_unit_tests.txt | 210 PASS, 0 FAIL, 0 ERROR, 0 SKIP: 175 test tool trước đó, 9 test bộ chấm và 26 test ngày giờ/độ mới nguồn. |
 | Sửa bộ chấm eval | run_eval.py; tests/test_eval_structured_args.py; hai group run JSON | Giữ so sánh scalar list không phụ thuộc thứ tự; list object/nested list giữ thứ tự. Không đổi dữ liệu eval để né lỗi. |
 
@@ -180,7 +199,7 @@ Một lượt hỏi giá vàng trên Cloud gắn nhãn “hôm nay” với 07/1
 
 Bản sửa cấp thời gian UTC+7 mới mỗi lượt, ghi `runtime_context` vào transcript, hiển thị ngày Việt Nam trên UI và giữ `published_date` khi API có trả. Lookup bỏ mặc định lọc theo tuần; thêm `max_age_hours=0` để yêu cầu lấy trang live khi hỏi giá/thời tiết cập nhật liên tục. Ngày nguồn và thời điểm truy xuất được phân biệt; model được yêu cầu không đổi nhãn số liệu cũ thành giá hôm nay nếu chưa xác minh được thời điểm.
 
-Thêm **26 test** cho chuyển ngày UTC/Vietnam, phiên qua nửa đêm, metadata các nhánh thoát và payload/nguồn thời gian; tổng **210 PASS**. Đây là kiểm tra offline, chưa phải bằng chứng model trên Cloud đã trả đúng giá hiện tại. Các điểm base 95% và group 100% ở B1 thuộc bản v5 trước thay đổi này; cần eval mới nếu muốn báo điểm cho v6. Chi tiết: [date_context_fix.md](date_context_fix.md).
+Thêm **26 test** cho chuyển ngày UTC/Vietnam, phiên qua nửa đêm, metadata các nhánh thoát và payload/nguồn thời gian; tổng **210 PASS**. Đây là kiểm tra offline. Transcript Cloud bổ sung ở B4.1 xác nhận runtime date và câu trả lời ngày, nhưng chưa xác minh giá hiện tại. Hai run v6 mới đạt base **18/20 (90%)**, group **10/10 (100%)**, không có provider_error. So với lần base v5 đã lưu, điểm giảm 5 điểm phần trăm; đây là so sánh hai lần chạy, chưa đủ để quy nguyên nhân cho riêng thay đổi ngày giờ. Eval gọi `ResearchAgent.run` trực tiếp, không qua `run_model_tool_loop` của CLI/UI nên không cấp system context ngày giờ mới. Vì thế kết quả này đo chọn tool/args với declaration và implementation v6, không xác minh trọn vòng chat hay giá vàng hôm nay. R03 lệch query; R12 lệch response_type như B2. Chi tiết: [date_context_fix.md](date_context_fix.md).
 
 ## B6. Reflection
 
@@ -194,3 +213,17 @@ Thêm **26 test** cho chuyển ngày UTC/Vietnam, phiên qua nửa đêm, metada
 ## B7. Small Local Model Challenge (bonus)
 
 Chưa có run Ollama trong tập bằng chứng hiện tại. Không yêu cầu điểm cho bonus local model; không tạo số liệu so sánh cloud/local khi chưa chạy.
+
+## B8. Phân công công việc tiếp theo
+
+Phân công theo REPORT và kết quả đối chiếu hiện tại; đây là trách nhiệm hoàn thiện/bàn giao, không xác nhận tác giả của các thay đổi đã có trước đây.
+
+| Thành viên | Phụ trách chính | Đầu ra |
+|---|---|---|
+| Cường | Eval, version evidence, tích hợp và báo cáo B1/B2/B6 | Metric khớp run JSON; tổng hợp REPORT/version log và review. |
+| Trí | UI, deploy, giới thiệu A1–A3 và demo B4 | Link Cloud, kịch bản demo, transcript của bản triển khai. |
+| Ánh | Prompt/hội thoại, clarify và xác nhận send | Sửa suy diễn topic thành handle, tiếng Việt, hỏi/xác nhận đúng ngữ cảnh; bằng chứng trước/sau. |
+| Bảo | Lookup/fetch, ngày hiệu lực và đơn vị của giá | Kiểm tra nguồn cũ/thiếu đơn vị; không khẳng định giá hôm nay khi chưa xác minh. |
+| Nam | QA tools, regression và group B3/B5 | Test có assertion, case bổ sung, log pytest và eval trên bản tích hợp. |
+
+Chi tiết file phụ trách, tiêu chí hoàn thành, thứ tự phối hợp và phần thuyết trình: [TASK_ALLOCATION.md](TASK_ALLOCATION.md).
