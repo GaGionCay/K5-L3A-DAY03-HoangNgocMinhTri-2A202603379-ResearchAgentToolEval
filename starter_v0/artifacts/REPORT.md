@@ -14,35 +14,57 @@
 
 # PHẦN A — Giới thiệu agent
 
+**Research Agent — tìm tin, đọc bài và tổng hợp bản tin**
+
+**Bản demo hiện tại: 11 tool · 1 tool nhóm tự viết · 175 test PASS.**
+
 ## A1. Agent này làm được gì
 
-> 1–2 câu mô tả agent dùng để làm gì (cho team khác hiểu nhanh).
+Bạn có thể nhờ agent tìm tin trên web, theo dõi bài đăng trên X/Twitter, đọc một đường link và gom kết quả thành bản tin kèm nguồn. Agent còn có công cụ tìm paper trên arXiv, tra cứu chính sách nội bộ, lọc kết quả trùng URL và gửi bản tin qua Telegram sau khi được xác nhận.
 
-Ví dụ: "Research agent: tìm tin theo từ khóa / theo tài khoản, đọc URL, tổng hợp thành digest, và gửi lên Telegram khi được xác nhận."
+**Mở demo:** [Research Agent](https://cooking-questions-fastest-diffs.trycloudflare.com)
 
-**Link dùng thử (deploy):**
+Nhập yêu cầu vào ô chat; nếu agent cần bổ sung tài khoản hoặc URL, trả lời ngay ở lượt tiếp theo. Chọn **Cuộc trò chuyện mới** khi muốn bắt đầu chủ đề khác.
 
-> Dán link public để team khác mở thử ngay. Cách deploy nhanh bằng Cloudflare Tunnel xem README. Nếu deploy Vercel/Streamlit Cloud thì dán link đó.
->
-> URL: 
+Link demo là link tạm thời, hoạt động khi nhóm giữ Streamlit và Cloudflare Tunnel chạy. Nếu khởi động lại tunnel, nhóm sẽ cập nhật địa chỉ mới.
 
 ## A2. Tool agent có
 
-> Liệt kê các tool agent đang dùng (gồm tool mới nhóm tự thêm). Mỗi tool 1 dòng: tên + làm được gì.
-
-| Tên tool | Làm được gì | Tool mới nhóm thêm? |
+| Tên tool | Làm được gì | Đã hoàn thiện code, mô tả và test? |
 |---|---|---|
-| clarify | hỏi lại người dùng khi thiếu thông tin | không |
-|  |  |  |
-|  |  |  |
+| `clarify` | Hỏi thêm thông tin còn thiếu hoặc xin xác nhận trước khi gửi. | Có |
+| `timeline` | Lấy các bài đăng gần đây của một tài khoản X/Twitter cụ thể. | Có |
+| `social_search` | Tìm bài đăng trên X/Twitter theo từ khóa, chọn bài mới nhất hoặc nổi bật. | Có |
+| `lookup` | Tìm nguồn web và tin tức theo chủ đề, khoảng thời gian. | Có |
+| `fetch` | Đọc nội dung từ một URL đã có để phục vụ tóm tắt. | Có |
+| `format` | Trình bày dữ liệu đã thu thập thành bản tin hoặc thread Markdown. | Có |
+| `send` | Gửi nội dung đã được người dùng duyệt tới kênh Telegram đã cấu hình. | Có |
+| `policy` | Tìm thông tin trong kho chính sách nội bộ của bài lab. | Có |
+| `papers` | Tìm paper trên arXiv, trả về abstract và liên kết nguồn. | Có |
+| `paper_text` | Tải PDF arXiv và trích văn bản theo số trang, số ký tự yêu cầu. | Có |
+| `deduplicate` | Loại bỏ kết quả trùng URL, giữ bản ghi đầu tiên và thứ tự ban đầu. | Có |
+
+Tool mới của nhóm là **`deduplicate`**. Khi tổng hợp nhiều danh sách kết quả, tool giúp loại các bản ghi lặp lại trước bước trình bày bản tin; tool chạy cục bộ và không cần API key.
+
+**Đã kiểm tra:** Bộ test offline đạt **175 PASS, 0 FAIL, 0 ERROR, 0 SKIP**, gồm contract, input hợp lệ/sai kiểu và các nhánh lỗi. Test HTTP dùng mock; khả năng gọi dịch vụ thật còn phụ thuộc API key, quyền truy cập và hạn mức. Telegram cần cấu hình bot/kênh và xác nhận của người dùng trước khi gửi.
 
 ## A3. Câu hỏi mẫu để thử
 
-> 3–5 câu hỏi/yêu cầu mẫu để team khác tự thử agent ngay.
+1. **Tin web:** “Tìm 5 tin tức AI trong hôm nay, kèm liên kết nguồn.”
+2. **Bài đăng theo tài khoản:** “Lấy 3 bài đăng mới nhất của tài khoản sama trên X/Twitter.”
+3. **Đọc bài viết:** “Đọc và tóm tắt trang https://www.python.org/about/ giúp tôi.”
+4. **Tìm paper:** “Tìm 3 paper trên arXiv về agent evaluation, kèm abstract và link.”
+5. **Thử tool mới:** “Lọc trùng theo URL trong danh sách dưới đây, giữ bản ghi đầu tiên. Chỉ lọc danh sách, không mở các URL.”
 
-1.
-2.
-3.
+   ```json
+   [
+     {"title": "Tin A", "url": "https://example.com/a"},
+     {"title": "Tin A bản sao", "url": "https://example.com/a"},
+     {"title": "Tin B", "url": "https://example.com/b"}
+   ]
+   ```
+
+   Kết quả mong đợi: còn 2 bản ghi là **Tin A** và **Tin B**.
 
 ---
 
@@ -94,7 +116,17 @@ Only fill if your team did bonus.
 | UI |  |  |  |
 | Tool unit tests (`tests/`) | `pytest` output |  |  |
 
-Tool unit tests: số test đã viết, số bug tìm được trong tool có sẵn (nếu có), và một ví dụ lỗi mà unit test bắt được nhưng eval không bắt được.
+**Tool unit tests:** Đã thay toàn bộ 17 stub TODO bằng test có assertion và bổ sung test input biên, lỗi HTTP/timeout, arXiv và PDF. Bộ test offline sau cập nhật: **175 passed, 0 failed, 0 skipped**. Bằng chứng: `artifacts/tools_unit_tests.txt`.
+
+Ba lỗi thực tế đã được kiểm chứng bằng regression test trên code cũ:
+
+- `send` chấp nhận chuỗi `"false"`/`"true"` và số `1` như xác nhận. Bản sửa chỉ chấp nhận boolean `True` và kiểm tra cả trường `ok` của Telegram.
+- `timeline` truyền nguyên handle có `@`/khoảng trắng và có thể mất URL khi API không trả handle. Bản sửa chuẩn hóa handle và dựng URL từ tài khoản đã biết.
+- `paper_text` áp ngưỡng tối thiểu 1000 ký tự, làm sai yêu cầu `max_chars=4`. Bản sửa tôn trọng giới hạn ký tự dương được yêu cầu.
+
+Các test hồi quy này có **5 failed, 3 passed** trên code cũ và đều PASS sau sửa. Ví dụ eval chỉ đo việc model gọi `send` với arguments nào; unit test còn phát hiện code có thực sự chặn giá trị xác nhận sai kiểu hay không.
+
+Test HTTP dùng mock, PDF dùng dữ liệu cục bộ; không gửi Telegram hoặc gọi API thật. Chức năng live cần key, quyền truy cập và hạn mức dịch vụ hợp lệ. Điểm eval v0–v3 vẫn là bằng chứng của các phiên bản trước; chưa có điểm model eval cho bộ tool vừa cập nhật.
 
 ## B6. Reflection
 
