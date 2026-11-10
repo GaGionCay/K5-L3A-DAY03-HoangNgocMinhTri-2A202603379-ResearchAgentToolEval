@@ -5,6 +5,7 @@ import pytest
 
 from conftest import FakeResponse  # noqa: F401  (you will need it)
 from tools import TOOL_FUNCTIONS  # noqa: F401
+from tools.send.tool import _approve_send_after_user_confirmation
 
 
 
@@ -47,7 +48,8 @@ def test_send_confirmed_posts_to_telegram(monkeypatch, fake_http):
     monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "fake-token")
     monkeypatch.setenv("TELEGRAM_CHAT_ID", "-100123")
     calls = fake_http(FakeResponse({"ok": True}))
-    result = TOOL_FUNCTIONS["send"]("Bản tin", confirmed=True)
+    approval = _approve_send_after_user_confirmation("Bản tin", "-100123")
+    result = TOOL_FUNCTIONS["send"]("Bản tin", confirmed=True, approval=approval)
     assert result["status"] == "sent"
     assert len(calls) == 1
     assert calls[0]["method"] == "POST"
@@ -58,7 +60,7 @@ def test_send_confirmed_posts_to_telegram(monkeypatch, fake_http):
 def test_send_confirmed_without_env_returns_error_and_no_request(fake_http):
     calls = fake_http(FakeResponse({"ok": True}))
     result = TOOL_FUNCTIONS["send"]("Bản tin", confirmed=True)
-    assert result["error"] == "RuntimeError"
+    assert result["status"] == "needs_destination"
     assert calls == []
 
 

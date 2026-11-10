@@ -7,11 +7,15 @@ inputs:
 - question
 - response_type
 - options
+- draft
+- destination
 outputs:
 - question
 - response_type
 - options
 - awaiting_user
+- draft
+- destination
 side_effect: false
 ---
 
@@ -30,6 +34,7 @@ Thông tin đã rõ hoặc đã được cung cấp ở lượt trước.
 ## Arguments và kết quả
 
 question phải là câu hỏi không rỗng. response_type là text, yes_no hoặc choice. choice cần ít nhất hai options không rỗng. Kết quả awaiting_user=true để dừng vòng gọi tool.
+Khi xác nhận gửi, truyền draft và destination chính xác; runtime sẽ hiển thị cả hai trước khi chấp nhận câu trả lời yes/no.
 
 ## Ví dụ
 

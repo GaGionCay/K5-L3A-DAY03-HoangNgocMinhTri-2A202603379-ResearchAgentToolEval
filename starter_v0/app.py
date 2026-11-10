@@ -4,7 +4,7 @@ from uuid import uuid4
 
 import streamlit as st
 
-from chat import now_iso, run_model_tool_loop, write_transcript
+from chat import now_iso, resolve_pending_send, run_model_tool_loop, write_transcript
 from providers import make_provider
 from time_context import current_time_context
 from tools import load_tool_declarations, to_openai_tools
@@ -28,6 +28,7 @@ def new_session():
     session_id = f"ui_{APP_VERSION}_{uuid4().hex}"
     return {
         "history": [],
+        "pending_send": None,
         "prompt": PROMPT_PATH.read_text(encoding="utf-8"),
         "tools": to_openai_tools(load_tool_declarations(TOOLS_PATH)),
         "path": ROOT / "transcripts" / f"{session_id}.transcript.json",
@@ -53,6 +54,7 @@ with st.sidebar:
         st.rerun()
 
 session = st.session_state.research_session
+session.setdefault("pending_send", None)
 
 st.title("🔎 Research Agent")
 st.caption("Bạn muốn tìm hiểu thông tin gì hôm nay?")
@@ -60,7 +62,10 @@ st.caption(f"Hôm nay: {current_time_context()['display_date']} · Giờ Việt 
 
 for message in session["history"]:
     with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+        if message.get("format") == "text":
+            st.text(message["content"])
+        else:
+            st.markdown(message["content"])
 
 query = st.chat_input("Nhập câu hỏi hoặc dán URL bài viết...")
 
@@ -75,24 +80,33 @@ if query:
     }
 
     try:
-        with st.spinner("Đang tìm và tổng hợp thông tin..."):
-            provider = make_provider("openrouter")
-            result = run_model_tool_loop(
-                provider=provider,
-                messages=[
-                    {"role": "system", "content": session["prompt"]},
-                    *session["history"][-12:],
-                    {"role": "user", "content": query},
-                ],
-                tools=session["tools"],
-                model=None,
-                max_tool_rounds=4,
-            )
+        provider = None
+        if session["pending_send"] is not None:
+            result = resolve_pending_send(query, session["pending_send"])
+            if result["status"] != "waiting_for_user":
+                session["pending_send"] = None
+        else:
+            with st.spinner("Đang tìm và tổng hợp thông tin..."):
+                provider = make_provider("openrouter")
+                result = run_model_tool_loop(
+                    provider=provider,
+                    messages=[
+                        {"role": "system", "content": session["prompt"]},
+                        *[
+                            {"role": message["role"], "content": message["content"]}
+                            for message in session["history"][-12:]
+                        ],
+                        {"role": "user", "content": query},
+                    ],
+                    tools=session["tools"],
+                    model=None,
+                    max_tool_rounds=4,
+                )
+                session["pending_send"] = result.get("pending_send")
 
         turn.update(result)
-        session["transcript"]["model"] = getattr(
-            provider, "default_model", None
-        )
+        if provider is not None:
+            session["transcript"]["model"] = getattr(provider, "default_model", None)
 
         if result["status"] == "max_tool_rounds":
             answer = (
@@ -104,10 +118,17 @@ if query:
                 "Chưa có câu trả lời. Bạn thử diễn đạt lại yêu cầu nhé."
             )
 
+        assistant_message = {"role": "assistant", "content": answer}
+        if result["status"] == "waiting_for_user":
+            assistant_message["format"] = "text"
         session["history"].extend([
             {"role": "user", "content": query},
-            {"role": "assistant", "content": answer},
+            assistant_message,
         ])
+        if result["status"] == "waiting_for_user":
+            st.text(answer)
+        else:
+            st.markdown(answer)
 
     except Exception as exc:
         turn.update({

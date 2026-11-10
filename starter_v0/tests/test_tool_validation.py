@@ -12,6 +12,7 @@ import requests
 
 from conftest import FakeResponse
 from tools import TOOL_FUNCTIONS as T
+from tools.send.tool import _approve_send_after_user_confirmation
 
 
 @pytest.mark.parametrize("name,args", [
@@ -94,8 +95,22 @@ def test_api_failure_returns_error_dict(name, args, key, failure, expected, monk
 
 @pytest.mark.parametrize("confirmed", [False, "false", "true", 1, None, []])
 def test_send_requires_literal_true_before_any_network(confirmed, fake_http):
+    destination = "-100123"
     calls = fake_http(FakeResponse({"ok": True}))
-    assert T["send"]("Message", confirmed=confirmed)["status"] == "needs_confirmation"
+    assert T["send"]("Message", confirmed=confirmed, destination=destination)["status"] == "needs_confirmation"
+    assert calls == []
+
+
+def test_send_true_flag_without_trusted_approval_does_not_send(monkeypatch, fake_http):
+    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "fake-token")
+    monkeypatch.setenv("TELEGRAM_CHAT_ID", "-100123")
+    calls = fake_http(FakeResponse({"ok": True}))
+
+    result = T["send"]("Message", confirmed=True)
+
+    assert result["status"] == "needs_confirmation"
+    assert result["draft"] == "Message"
+    assert result["destination"] == "-100123"
     assert calls == []
 
 
@@ -103,7 +118,8 @@ def test_send_checks_telegram_api_result(monkeypatch, fake_http):
     monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "fake-token")
     monkeypatch.setenv("TELEGRAM_CHAT_ID", "-100123")
     calls = fake_http(FakeResponse({"ok": False, "description": "Bad Request"}))
-    assert T["send"]("Message", confirmed=True)["error"] == "RuntimeError"
+    approval = _approve_send_after_user_confirmation("Message", "-100123")
+    assert T["send"]("Message", confirmed=True, approval=approval)["error"] == "RuntimeError"
     assert len(calls) == 1
 
 
@@ -111,7 +127,8 @@ def test_send_http_error_redacts_token(monkeypatch, fake_http):
     monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "secret-test-token")
     monkeypatch.setenv("TELEGRAM_CHAT_ID", "-100123")
     fake_http(requests.HTTPError("403 for https://api.telegram.org/botsecret-test-token/sendMessage"))
-    result = T["send"]("Message", confirmed=True)
+    approval = _approve_send_after_user_confirmation("Message", "-100123")
+    result = T["send"]("Message", confirmed=True, approval=approval)
     assert result["error"] == "HTTPError"
     assert "secret-test-token" not in result["message"]
 

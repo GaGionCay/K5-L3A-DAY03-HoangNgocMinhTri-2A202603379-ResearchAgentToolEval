@@ -6,7 +6,13 @@ from tools._shared import err
 from tools._validation import choice, text
 
 
-def ask_user(question: str = "", response_type: str = "text", options: list[str] | None = None) -> dict[str, Any]:
+def ask_user(
+    question: str = "",
+    response_type: str = "text",
+    options: list[str] | None = None,
+    draft: str | None = None,
+    destination: str | None = None,
+) -> dict[str, Any]:
     try:
         question = text(question, "question")
         response_type = choice(response_type, "response_type", {"text", "yes_no", "choice"})
@@ -15,7 +21,18 @@ def ask_user(question: str = "", response_type: str = "text", options: list[str]
             raise ValueError("options must be a list of non-empty strings")
         if response_type == "choice" and len(options) < 2:
             raise ValueError("choice requires at least two options")
-        return {"tool": "ask_user", "question": question, "response_type": response_type,
-                "options": list(options), "awaiting_user": True}
+        if draft is not None:
+            draft = text(draft, "draft")
+        if destination is not None:
+            destination = text(destination, "destination")
+        return {
+            "tool": "ask_user",
+            "question": question,
+            "response_type": response_type,
+            "options": list(options),
+            "awaiting_user": True,
+            "draft": draft,
+            "destination": destination,
+        }
     except Exception as exc:
         return err("ask_user", exc)

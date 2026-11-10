@@ -2,10 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any
-from .arxiv_search.tool import run as arxiv_search_run
 
 import yaml
-
 # Folder names are intentionally vague to match the tool names students see.
 # The imported function names are the underlying implementations (unchanged).
 from .clarify.tool import ask_user
@@ -38,9 +36,8 @@ TOOL_FUNCTIONS = {
     "papers": arxiv_search,
     "paper_text": get_arxiv_paper_text,
     "deduplicate": deduplicate,
-    # TODO(student): register your new tool here, e.g. "my_tool": my_tool_function,
-    # then declare it in artifacts/tools.yaml and run `pytest tests/test_tool_contract.py`.
-    "arxiv_search": arxiv_search_run,
+    # Alias to papers to preserve backwards compatibility and prevent routing failures
+    "arxiv_search": arxiv_search,
 }
 
 

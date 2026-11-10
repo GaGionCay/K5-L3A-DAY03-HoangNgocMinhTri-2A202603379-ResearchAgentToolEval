@@ -39,11 +39,13 @@ def test_format_truncates_long_summary() -> None:
 
 # 2. Guardrail ---------------------------------------------------------------
 
-def test_send_without_confirmation_does_not_call_network(fake_http) -> None:
+def test_send_without_confirmation_does_not_call_network(monkeypatch, fake_http) -> None:
+    monkeypatch.setenv("TELEGRAM_CHAT_ID", "@research_channel")
     calls = fake_http(FakeResponse({"ok": True}))
     result = send_tool(text="Bản tin", confirmed=False)
 
     assert result["status"] == "needs_confirmation"
+    assert result["destination"] == "@research_channel"
     assert calls == []
 
 

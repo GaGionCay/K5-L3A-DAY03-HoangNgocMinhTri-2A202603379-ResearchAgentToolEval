@@ -25,6 +25,12 @@ tools:
         items:
           type: string
         description: Danh sách lựa chọn không rỗng; cần ít nhất hai lựa chọn khi response_type=choice.
+      draft:
+        type: string
+        description: Bản nháp chính xác cần người dùng duyệt khi xác nhận thao tác gửi.
+      destination:
+        type: string
+        description: Đích gửi chính xác cần hiển thị và gắn với bản nháp khi xác nhận thao tác gửi.
     required:
     - question
 - name: timeline
@@ -173,7 +179,7 @@ tools:
     - items
     - template
 - name: send
-  description: Gửi nguyên văn text tới kênh Telegram đã cấu hình. CHỈ dùng khi người dùng đã xác nhận
+  description: Gửi nguyên văn text tới destination được chỉ định hoặc TELEGRAM_CHAT_ID đã cấu hình. CHỈ dùng khi người dùng đã xác nhận
     nội dung và đích gửi; khi đó confirmed=true. Nếu chưa xác nhận, dùng clarify với response_type=yes_no.
     Không dùng để trả lời thông thường, soạn nháp, hoặc khi còn thiếu nội dung/đích gửi. Không tự suy
     diễn sự đồng ý.
@@ -191,6 +197,9 @@ tools:
         default: false
         description: Chỉ đặt boolean true khi người dùng đã duyệt nội dung và đích gửi trong hội thoại.
           Không suy diễn từ yêu cầu soạn nháp.
+      destination:
+        type: string
+        description: Telegram chat ID hoặc channel đích; nếu không truyền, dùng TELEGRAM_CHAT_ID đã cấu hình.
     required:
     - text
 - name: policy
