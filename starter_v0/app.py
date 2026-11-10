@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from uuid import uuid4
 
@@ -15,6 +16,17 @@ ROOT = Path(__file__).resolve().parent
 PROMPT_PATH = ROOT / "artifacts" / "system_prompt.md"
 TOOLS_PATH = ROOT / "artifacts" / "tools.yaml"
 APP_VERSION = "v6-date-context"
+
+
+def current_time_context():
+    local = datetime.now(timezone.utc).astimezone(timezone(timedelta(hours=7)))
+    return {
+        "current_datetime": local.isoformat(timespec="seconds"),
+        "current_date": local.date().isoformat(),
+        "display_date": local.strftime("%d/%m/%Y"),
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset": "+07:00",
+    }
 
 st.set_page_config(
     page_title="Research Agent",
@@ -66,6 +78,7 @@ for message in session["history"]:
             st.text(message["content"])
         else:
             st.markdown(message["content"])
+        st.markdown(message["content"])
 
 query = st.chat_input("Nhập câu hỏi hoặc dán URL bài viết...")
 
@@ -79,34 +92,36 @@ if query:
         "user": query,
     }
 
+    runtime_context = current_time_context()
+    turn["runtime_context"] = runtime_context
+
     try:
-        provider = None
-        if session["pending_send"] is not None:
-            result = resolve_pending_send(query, session["pending_send"])
-            if result["status"] != "waiting_for_user":
-                session["pending_send"] = None
-        else:
-            with st.spinner("Đang tìm và tổng hợp thông tin..."):
-                provider = make_provider("openrouter")
-                result = run_model_tool_loop(
-                    provider=provider,
-                    messages=[
-                        {"role": "system", "content": session["prompt"]},
-                        *[
-                            {"role": message["role"], "content": message["content"]}
-                            for message in session["history"][-12:]
-                        ],
-                        {"role": "user", "content": query},
-                    ],
-                    tools=session["tools"],
-                    model=None,
-                    max_tool_rounds=4,
-                )
-                session["pending_send"] = result.get("pending_send")
+        with st.spinner("Đang tìm và tổng hợp thông tin..."):
+            provider = make_provider("openrouter")
+            result = run_model_tool_loop(
+                provider=provider,
+                messages=[
+                    {"role": "system", "content": session["prompt"]},
+                    {
+                        "role": "system",
+                        "content": (
+                            "Application clock: " + runtime_context["current_datetime"]
+                            + ". User timezone: Asia/Ho_Chi_Minh (UTC+7). "
+                            + "Resolve today's date using this clock."
+                        ),
+                    },
+                    *session["history"][-12:],
+                    {"role": "user", "content": query},
+                ],
+                tools=session["tools"],
+                model=None,
+                max_tool_rounds=4,
+            )
 
         turn.update(result)
-        if provider is not None:
-            session["transcript"]["model"] = getattr(provider, "default_model", None)
+        session["transcript"]["model"] = getattr(
+            provider, "default_model", None
+        )
 
         if result["status"] == "max_tool_rounds":
             answer = (
@@ -129,6 +144,10 @@ if query:
             st.text(answer)
         else:
             st.markdown(answer)
+        session["history"].extend([
+            {"role": "user", "content": query},
+            {"role": "assistant", "content": answer},
+        ])
 
     except Exception as exc:
         turn.update({
