@@ -10,13 +10,11 @@ from tools._shared import TIMEOUT, domain, err
 
 def read_url(url: str = "") -> dict[str, Any]:
     try:
-        key = os.getenv("FIRECRAWL_API_KEY")
-        if not key:
-            raise RuntimeError("Missing FIRECRAWL_API_KEY env var")
+        api_key = os.getenv("FIRECRAWL_API_KEY", "")
         response = requests.post(
             "https://api.firecrawl.dev/v1/scrape",
             json={"url": url, "formats": ["markdown"]},
-            headers={"Authorization": f"Bearer {key}"},
+            headers={"Authorization": f"Bearer {api_key}"},
             timeout=60,
         )
         response.raise_for_status()
@@ -30,4 +28,3 @@ def read_url(url: str = "") -> dict[str, Any]:
         }]}
     except Exception as exc:
         return err("read_url", exc)
-

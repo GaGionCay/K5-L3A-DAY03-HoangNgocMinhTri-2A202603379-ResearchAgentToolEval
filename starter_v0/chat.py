@@ -117,18 +117,33 @@ def run_model_tool_loop(
             round_record["tool_results"].append(event)
             all_tool_events.append(event)
 
-            # Detect the clarification/pause tool by its output flag (rename-proof),
-            # not by a hard-coded tool name.
             result = event.get("result", {})
-            if isinstance(result, dict) and result.get("awaiting_user"):
-                question = result.get("question") or call.args.get("question") or "Bạn bổ sung thêm thông tin nhé."
-                rounds.append(round_record)
-                return {
-                    "status": "waiting_for_user",
-                    "assistant_text": question,
-                    "rounds": rounds,
-                    "tool_events": all_tool_events,
-                }
+            if isinstance(result, dict):
+                # Xử lý khi cần làm rõ thông tin (clarification)
+                if result.get("awaiting_user"):
+                    question = result.get("question") or call.args.get("question") or "Bạn bổ sung thêm thông tin nhé."
+                    rounds.append(round_record)
+                    return {
+                        "status": "waiting_for_user",
+                        "assistant_text": question,
+                        "rounds": rounds,
+                        "tool_events": all_tool_events,
+                    }
+                
+                # BỔ SUNG MỚI: Xử lý khi cần người dùng xác nhận gửi (needs_confirmation)
+                if result.get("status") == "needs_confirmation":
+                    draft_text = result.get("draft") or call.args.get("text", "")
+                    confirm_msg = (
+                        f"⚠️ Nội dung cần xác nhận trước khi gửi:\n\n\"{draft_text}\"\n\n"
+                        "Bạn có đồng ý phát hành/gửi nội dung này không? (Trả lời 'có' để xác nhận hoặc nhập chỉnh sửa mới)"
+                    )
+                    rounds.append(round_record)
+                    return {
+                        "status": "needs_confirmation",
+                        "assistant_text": confirm_msg,
+                        "rounds": rounds,
+                        "tool_events": all_tool_events,
+                    }
 
             non_clarification_events.append(event)
 

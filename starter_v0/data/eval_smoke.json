@@ -1,0 +1,31 @@
+{
+  "dataset_id": "day04_v2_research_smoke",
+  "dataset_role": "smoke",
+  "description": "Small local routing smoke suite. Includes safe no-tool cases and one local clarification-tool case.",
+  "cases": [
+    {
+      "id": "S01_out_of_scope",
+      "phase": "B",
+      "query": "What is the integral of x squared?",
+      "failure_type": "out_of_scope",
+      "expect": {"no_tool": true},
+      "metadata": {"what_it_tests": "No tool call for an out-of-scope request."}
+    },
+    {
+      "id": "S02_meta_question",
+      "phase": "B",
+      "query": "What can this research assistant do?",
+      "failure_type": "unnecessary_tool",
+      "expect": {"no_tool": true},
+      "metadata": {"what_it_tests": "Answer a capability question without a tool call."}
+    },
+    {
+      "id": "S03_missing_account",
+      "phase": "B",
+      "query": "Summarize the 5 latest tweets for me.",
+      "failure_type": "missing_info",
+      "expect": {"tool_calls": [{"name": "clarify", "args": {"response_type": "text"}}]},
+      "metadata": {"what_it_tests": "Use the local clarification tool instead of guessing an account."}
+    }
+  ]
+}

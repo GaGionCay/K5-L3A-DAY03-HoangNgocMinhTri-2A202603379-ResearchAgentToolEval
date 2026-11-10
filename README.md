@@ -198,6 +198,19 @@ Output is saved to `runs/*.json`. Read:
 
 The run JSON also stores `artifact_version`, `prompt_hash`, `tools_hash`, actual tool calls, and actual tool results. That is the evidence for your report.
 
+For a quick, low-request smoke test before running the full suite, use the included three-case dataset:
+
+```bash
+python run_eval.py \
+  --provider gemini \
+  --model gemini-3.5-flash \
+  --version smoke \
+  --suite base \
+  --eval-cases data/eval_smoke.json
+```
+
+`--suite` labels the run; `--eval-cases` selects the dataset. A custom dataset must use the same JSON shape as the base eval. The smoke dataset makes three model requests and uses only a local clarification tool, but those requests still count toward the provider's quota.
+
 Optional: parse run JSON into a flat CSV table for analysis:
 
 ```bash

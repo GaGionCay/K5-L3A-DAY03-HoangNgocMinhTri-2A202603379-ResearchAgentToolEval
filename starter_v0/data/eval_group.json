@@ -1,7 +1,75 @@
 {
-  "dataset_id": "day04_v2_research_group",
-  "dataset_role": "group",
-  "description": "Case do NHÓM tự viết thêm để cover thêm trường hợp. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), và expect (tool_calls[...] hoặc no_tool=true). Nên kèm metadata.what_it_tests.",
-  "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
-  "cases": []
+  "version": "1.0",
+  "cases": [
+    {
+      "id": "group_01_single_arxiv",
+      "phase": "test",
+      "prompt": "Find recent arXiv papers about Agentic RAG.",
+      "expect": { "tool_calls": [{ "name": "arxiv_search" }] }
+    },
+    {
+      "id": "group_02_single_policy",
+      "phase": "test",
+      "prompt": "What is our company data privacy policy regarding external LLM API usage?",
+      "expect": { "tool_calls": [{ "name": "policy" }] }
+    },
+    {
+      "id": "group_03_single_lookup",
+      "phase": "test",
+      "prompt": "Search for recent news about Python 3.12 release updates.",
+      "expect": { "tool_calls": [{ "name": "lookup" }] }
+    },
+    {
+      "id": "group_04_single_fetch",
+      "phase": "test",
+      "prompt": "Read the content of https://example.com/article",
+      "expect": { "tool_calls": [{ "name": "fetch" }] }
+    },
+    {
+      "id": "group_05_single_timeline",
+      "phase": "test",
+      "prompt": "Show recent tweets from sama.",
+      "expect": { "tool_calls": [{ "name": "timeline" }] }
+    },
+    {
+      "id": "group_06_multi_clarify",
+      "phase": "test",
+      "turns": [
+        { "user": "Summarize the news for me.", "expect": { "tool_calls": [{ "name": "clarify" }] } },
+        { "user": "Focus on AI technology updates from the last week.", "expect": { "tool_calls": [{ "name": "lookup" }] } }
+      ]
+    },
+    {
+      "id": "group_07_multi_send_confirmation",
+      "phase": "test",
+      "turns": [
+        { "user": "Send a summary of yesterday's tech updates to Telegram.", "expect": { "tool_calls": [{ "name": "clarify" }] } },
+        { "user": "Yes, please confirm and send the following message: 'AI Tech Update Summary...'", "expect": { "tool_calls": [{ "name": "send" }] } }
+      ]
+    },
+    {
+      "id": "group_08_multi_paper_analysis",
+      "phase": "test",
+      "turns": [
+        { "user": "Find papers on transformer architectures.", "expect": { "tool_calls": [{ "name": "papers" }] } },
+        { "user": "Get the text of arxiv url 2301.00001.", "expect": { "tool_calls": [{ "name": "paper_text" }] } }
+      ]
+    },
+    {
+      "id": "group_09_multi_social_search",
+      "phase": "test",
+      "turns": [
+        { "user": "Search social media for discussions on Spring Boot.", "expect": { "tool_calls": [{ "name": "social_search" }] } },
+        { "user": "Format these findings into a brief summary.", "expect": { "tool_calls": [{ "name": "format" }] } }
+      ]
+    },
+    {
+      "id": "group_10_multi_policy_lookup",
+      "phase": "test",
+      "turns": [
+        { "user": "Check our internal policies on AI research.", "expect": { "tool_calls": [{ "name": "policy" }] } },
+        { "user": "Now lookup recent updates on the same topic on the web.", "expect": { "tool_calls": [{ "name": "lookup" }] } }
+      ]
+    }
+  ]
 }
