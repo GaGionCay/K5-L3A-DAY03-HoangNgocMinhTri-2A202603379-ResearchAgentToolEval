@@ -1,4 +1,4 @@
-# Báo cáo cá nhân — \[Họ tên] - \[MSSV]
+# Báo cáo cá nhân
 
 ## 1\. Thông tin thành viên
 
